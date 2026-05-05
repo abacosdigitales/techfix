@@ -819,8 +819,7 @@ window.guardarOT=async function(){
       if(esPresupuesto){
         const otId=editingId.slice(-6).toUpperCase();
         const baseUrl='https://abacosdigitales.github.io/site.github.io/cliente.html';
-        const linkAprobar=baseUrl+'?ot='+otId+'&accion=aprobar';
-        const linkRechazar=baseUrl+'?ot='+otId+'&accion=rechazar';
+        const linkOT=baseUrl+'?ot='+otId;
         try{
           await emailjs.send('service_928zkc2','template_1av53iv',{
             cliente_nombre:datos.cliente,
@@ -829,8 +828,8 @@ window.guardarOT=async function(){
             estado:'Presupuesto listo para aprobacion',
             diagnostico:datos.diag,
             costo:'$'+Number(datos.costo).toLocaleString('es-AR'),
-            link_aprobar:linkAprobar,
-            link_rechazar:linkRechazar,
+            link_aprobar:'Para ver el presupuesto y confirmar ingresa a: '+linkOT,
+            link_rechazar:'',
           });
           toast('Email de presupuesto enviado al cliente');
         }catch(emailErr){console.warn('Email presupuesto no enviado:',emailErr);}

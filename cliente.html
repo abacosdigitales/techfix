@@ -366,22 +366,14 @@ window.rechazarOT=async function(){
   }catch(e){if(btn){btn.textContent='Rechazar presupuesto';btn.disabled=false;}alert('Error al procesar. Intenta de nuevo.');}
 }
 
-// Manejar aprobacion/rechazo por URL (desde link del email)
+// Manejar busqueda automatica por URL
 (function(){
   const params=new URLSearchParams(window.location.search);
   const otParam=params.get('ot');
-  const accion=params.get('accion');
-  if(otParam&&accion){
-    document.getElementById('input-ot').value=otParam;
-    window.buscarOT();
-    const timer=setInterval(()=>{
-      if(otActual){
-        clearInterval(timer);
-        if(accion==='aprobar')window.aprobarOT();
-        else if(accion==='rechazar')window.rechazarOT();
-      }
-    },500);
-    setTimeout(()=>clearInterval(timer),10000);
+  if(otParam){
+    document.getElementById('input-ot').value=otParam.toUpperCase();
+    // Esperar a que Firebase esté listo y buscar automáticamente
+    setTimeout(()=>window.buscarOT(),800);
   }
 })();
 
