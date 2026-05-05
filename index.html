@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechFix Pro — Reparación de Equipos Informáticos</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="TechFix Pro — Reparación de Equipos Informáticos">
+<meta property="og:description" content="Diagnóstico preciso, reparación rápida y garantía de 90 días en cada trabajo. Computadoras, notebooks, PC de escritorio y periféricos.">
+<meta property="og:image" content="og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TechFix Pro — Reparación de Equipos Informáticos">
+<meta name="twitter:description" content="Diagnóstico preciso, reparación rápida y garantía de 90 días en cada trabajo.">
+<meta name="twitter:image" content="og-image.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --negro: #0a0a0a;
+  --negro2: #111111;
+  --negro3: #1a1a1a;
+  --negro4: #222222;
+  --turquesa: #00d4c8;
+  --turquesa2: #00b8ae;
+  --turquesa3: #007a74;
+  --naranja: #ff6b1a;
+  --naranja2: #e85a0a;
+  --naranja3: #ff8c45;
+  --blanco: #ffffff;
+  --gris1: #f0f0f0;
+  --gris2: #aaaaaa;
+  --gris3: #555555;
+  --borde: rgba(0,212,200,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--negro);color:var(--blanco);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Rajdhani',sans-serif;letter-spacing:0.03em}
+
+/* GRID NOISE BG */
+body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(0,212,200,0.015) 40px,rgba(0,212,200,0.015) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,212,200,0.015) 40px,rgba(0,212,200,0.015) 41px);pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.95);border-bottom:1px solid var(--borde);backdrop-filter:blur(12px)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 2rem;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:64px}
+.logo{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;letter-spacing:0.05em}
+.logo span:first-child{color:var(--turquesa)}
+.logo span:last-child{color:var(--naranja)}
+.nav-links{display:flex;gap:1.5rem;align-items:center;justify-content:center}
+.nav-links a{color:var(--gris2);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--turquesa)}
+.nav-cta{background:var(--naranja);color:var(--blanco);padding:8px 20px;border-radius:4px;font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;transition:background .2s}
+.nav-cta:hover{background:var(--naranja2);color:var(--blanco)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:64px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(0,212,200,0.07) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 20% 80%,rgba(255,107,26,0.06) 0%,transparent 60%)}
+.hero-corner{position:absolute;top:80px;right:0;width:500px;height:500px;border:1px solid rgba(0,212,200,0.08);border-radius:50%;transform:translateX(30%)}
+.hero-corner2{position:absolute;top:120px;right:0;width:350px;height:350px;border:1px solid rgba(255,107,26,0.08);border-radius:50%;transform:translateX(20%)}
+.hero-inner{max-width:1100px;margin:0 auto;padding:0 2rem;position:relative;z-index:1}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,200,0.1);border:1px solid rgba(0,212,200,0.25);border-radius:20px;padding:5px 14px;margin-bottom:1.5rem}
+.hero-tag span{color:var(--turquesa);font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--turquesa);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:clamp(42px,7vw,90px);font-weight:700;line-height:1;margin-bottom:1.5rem;color:var(--blanco)}
+.hero h1 .accent-t{color:var(--turquesa)}
+.hero h1 .accent-n{color:var(--naranja)}
+.hero p{font-size:18px;color:var(--gris2);max-width:520px;margin-bottom:2.5rem;font-weight:300;line-height:1.7}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:var(--naranja);color:var(--blanco);padding:14px 32px;border-radius:4px;font-weight:600;font-size:15px;letter-spacing:0.05em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;transition:all .2s;display:inline-block}
+.btn-primary:hover{background:var(--naranja2);transform:translateY(-2px)}
+.btn-secondary{background:transparent;color:var(--turquesa);padding:14px 32px;border-radius:4px;font-weight:600;font-size:15px;letter-spacing:0.05em;text-transform:uppercase;text-decoration:none;border:1px solid var(--turquesa);transition:all .2s;display:inline-block}
+.btn-secondary:hover{background:rgba(0,212,200,0.1);transform:translateY(-2px)}
+.hero-stats{display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--borde)}
+.hero-stat-val{font-family:'Rajdhani',sans-serif;font-size:42px;font-weight:700;color:var(--turquesa);line-height:1}
+.hero-stat-label{font-size:13px;color:var(--gris3);letter-spacing:0.05em;text-transform:uppercase;margin-top:4px}
+
+/* SECCIONES */
+section{position:relative;z-index:1}
+.section-inner{max-width:1100px;margin:0 auto;padding:5rem 2rem}
+.section-tag{font-size:12px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--naranja);margin-bottom:1rem}
+.section-title{font-size:clamp(32px,5vw,52px);font-weight:700;line-height:1.1;margin-bottom:1rem;color:var(--blanco)}
+.section-sub{font-size:16px;color:var(--gris2);max-width:560px;line-height:1.7;font-weight:300}
+.line-accent{display:inline-block;width:48px;height:3px;background:linear-gradient(90deg,var(--turquesa),var(--naranja));margin-bottom:1.5rem;border-radius:2px}
+
+/* SERVICIOS */
+#servicios{background:var(--negro2)}
+.servicios-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem}
+.servicio-card{background:var(--negro3);border:1px solid var(--borde);border-radius:8px;padding:2rem;transition:all .3s;position:relative;overflow:hidden}
+.servicio-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--turquesa),var(--naranja));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.servicio-card:hover{border-color:rgba(0,212,200,0.4);transform:translateY(-4px)}
+.servicio-card:hover::before{transform:scaleX(1)}
+.servicio-icon{width:48px;height:48px;background:rgba(0,212,200,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;font-size:22px}
+.servicio-card h3{font-size:22px;font-weight:700;margin-bottom:.75rem;color:var(--blanco)}
+.servicio-card p{font-size:14px;color:var(--gris2);line-height:1.6}
+.servicio-precio{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--borde);font-size:13px;color:var(--turquesa);font-weight:500;letter-spacing:0.05em}
+
+/* PROCESO */
+#proceso{background:var(--negro)}
+.proceso-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:3rem;position:relative}
+.proceso-steps::before{content:'';position:absolute;top:28px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--turquesa3),transparent);opacity:.5}
+.step{text-align:center;position:relative}
+.step-num{width:56px;height:56px;border-radius:50%;background:var(--negro3);border:2px solid var(--turquesa);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--turquesa);position:relative;z-index:1}
+.step h4{font-size:18px;font-weight:700;margin-bottom:.5rem;color:var(--blanco)}
+.step p{font-size:13px;color:var(--gris2)}
+
+/* FORM SOLICITUD */
+#solicitud{background:var(--negro2)}
+.form-layout{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem}
+@media(max-width:768px){.form-layout{grid-template-columns:1fr}}
+.form-info h3{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--blanco);margin-bottom:1rem}
+.form-info p{font-size:14px;color:var(--gris2);line-height:1.7;margin-bottom:1.5rem}
+.info-item{display:flex;gap:12px;align-items:flex-start;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--borde)}
+.info-item:last-child{border:none}
+.info-dot{width:8px;height:8px;background:var(--turquesa);border-radius:50%;flex-shrink:0;margin-top:6px}
+.info-item p{font-size:13px;color:var(--gris2);line-height:1.5}
+.form-box{background:var(--negro3);border:1px solid var(--borde);border-radius:8px;padding:2rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.form-field{margin-bottom:1rem}
+.form-field label{display:block;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gris2);margin-bottom:.5rem}
+.form-field input,.form-field select,.form-field textarea{width:100%;background:var(--negro4);border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:11px 14px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:14px;transition:border-color .2s;outline:none}
+.form-field input:focus,.form-field select,.form-field textarea:focus{border-color:var(--turquesa)}
+.form-field select{cursor:pointer}
+.form-field select option{background:var(--negro3)}
+.form-field textarea{resize:vertical;min-height:90px}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--gris3)}
+.checkbox-wrap{display:flex;gap:10px;align-items:flex-start;margin-bottom:1.25rem}
+.checkbox-wrap input{width:16px;height:16px;margin-top:2px;accent-color:var(--turquesa);flex-shrink:0;cursor:pointer}
+.checkbox-wrap label{font-size:13px;color:var(--gris2);line-height:1.5;cursor:pointer}
+.checkbox-wrap a{color:var(--turquesa);text-decoration:none}
+.checkbox-wrap a:hover{color:var(--naranja)}
+.btn-submit{width:100%;background:linear-gradient(90deg,var(--naranja),var(--naranja2));color:var(--blanco);padding:14px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,26,0.35)}
+.success-msg{display:none;background:rgba(0,212,200,0.1);border:1px solid var(--turquesa);border-radius:6px;padding:1.25rem;text-align:center;margin-top:1rem}
+.success-msg h4{font-family:'Rajdhani',sans-serif;font-size:22px;color:var(--turquesa);margin-bottom:.5rem}
+.success-msg p{font-size:13px;color:var(--gris2)}
+
+/* CONTRATO MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--negro2);border:1px solid var(--turquesa3);border-radius:10px;max-width:760px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-header{padding:1.5rem 2rem;border-bottom:1px solid var(--borde);display:flex;justify-content:space-between;align-items:center}
+.modal-header h2{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--turquesa)}
+.modal-close{background:none;border:none;color:var(--gris2);font-size:22px;cursor:pointer;padding:4px;line-height:1;transition:color .2s}
+.modal-close:hover{color:var(--naranja)}
+.modal-body{padding:2rem;overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--turquesa3) var(--negro3)}
+.modal-body::-webkit-scrollbar{width:5px}
+.modal-body::-webkit-scrollbar-track{background:var(--negro3)}
+.modal-body::-webkit-scrollbar-thumb{background:var(--turquesa3);border-radius:3px}
+.contrato-title{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--blanco);text-align:center;margin-bottom:.5rem}
+.contrato-sub{text-align:center;color:var(--gris2);font-size:13px;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--borde)}
+.contrato-art{margin-bottom:1.75rem}
+.contrato-art h3{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--naranja);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid rgba(255,107,26,0.2)}
+.contrato-art p,.contrato-art li{font-size:13px;color:var(--gris2);line-height:1.7;margin-bottom:.5rem}
+.contrato-art ul,.contrato-art ol{padding-left:1.25rem}
+.contrato-art li{margin-bottom:.35rem}
+.contrato-art strong{color:var(--blanco);font-weight:500}
+.modal-footer{padding:1.25rem 2rem;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:.75rem}
+.btn-cancel{background:transparent;border:1px solid var(--gris3);color:var(--gris2);padding:10px 20px;border-radius:4px;cursor:pointer;font-size:14px;transition:all .2s}
+.btn-cancel:hover{border-color:var(--gris2);color:var(--blanco)}
+.btn-accept{background:var(--turquesa);color:var(--negro);padding:10px 24px;border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.05em;border:none;transition:all .2s}
+.btn-accept:hover{background:var(--turquesa2)}
+
+/* FOOTER */
+footer{background:var(--negro3);border-top:1px solid var(--borde);padding:2rem 0}
+.footer-inner{max-width:1100px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700}
+.footer-logo span:first-child{color:var(--turquesa)}
+.footer-logo span:last-child{color:var(--naranja)}
+.footer-links a{color:var(--gris3);text-decoration:none;font-size:13px;margin-left:1.5rem;transition:color .2s}
+.footer-links a:hover{color:var(--turquesa)}
+.footer-copy{color:var(--gris3);font-size:12px;margin-top:.5rem;width:100%;text-align:center}
+
+/* ADMIN LINK */
+.admin-link{position:fixed;bottom:24px;right:24px;z-index:99;background:var(--negro3);border:1px solid var(--borde);border-radius:50px;padding:10px 18px;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gris2);font-size:12px;font-weight:500;letter-spacing:0.05em;transition:all .2s}
+.admin-link:hover{border-color:var(--turquesa);color:var(--turquesa);background:rgba(0,212,200,0.08)}
+.admin-dot{width:6px;height:6px;background:var(--turquesa);border-radius:50%}
+
+/* CONTADOR ANIMADO */
+#contador{background:var(--negro3)}
+.counter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;margin-top:3rem;text-align:center}
+.counter-item{padding:1.5rem;border:1px solid var(--borde);border-radius:8px;background:var(--negro2);transition:transform .3s}
+.counter-item:hover{transform:translateY(-4px)}
+.counter-num{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;line-height:1;background:linear-gradient(90deg,var(--turquesa),var(--naranja));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.counter-label{font-size:13px;color:var(--gris2);margin-top:.5rem;letter-spacing:0.05em}
+.counter-suffix{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;background:linear-gradient(90deg,var(--turquesa),var(--naranja));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* TESTIMONIOS */
+#testimonios{background:var(--negro2)}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem}
+.testi-card{background:var(--negro3);border:1px solid var(--borde);border-radius:8px;padding:1.75rem;position:relative;transition:transform .3s}
+.testi-card:hover{transform:translateY(-4px)}
+.testi-stars{color:var(--naranja);font-size:16px;margin-bottom:1rem;letter-spacing:2px}
+.testi-text{font-size:14px;color:var(--gris2);line-height:1.7;font-style:italic;margin-bottom:1.25rem}
+.testi-author{display:flex;align-items:center;gap:.75rem}
+.testi-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--blanco);flex-shrink:0}
+.testi-name{font-size:14px;font-weight:500;color:var(--blanco)}
+.testi-equipo{font-size:12px;color:var(--gris3)}
+.testi-quote{position:absolute;top:1.25rem;right:1.25rem;font-size:40px;color:var(--turquesa);opacity:.15;font-family:Georgia,serif;line-height:1}
+
+/* FAQ */
+#faq{background:var(--negro)}
+.faq-list{margin-top:3rem;max-width:760px}
+.faq-item{border:1px solid var(--borde);border-radius:8px;margin-bottom:.75rem;overflow:hidden;transition:border-color .3s}
+.faq-item.open{border-color:rgba(0,212,200,.4)}
+.faq-pregunta{padding:1.25rem 1.5rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;user-select:none}
+.faq-pregunta h4{font-size:15px;font-weight:500;color:var(--blanco);line-height:1.4}
+.faq-icon{width:24px;height:24px;border-radius:50%;background:var(--turquesa-dim);display:flex;align-items:center;justify-content:center;color:var(--turquesa);font-size:16px;flex-shrink:0;transition:transform .3s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--turquesa);color:var(--negro)}
+.faq-respuesta{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.faq-respuesta p{padding:0 1.5rem 1.25rem;font-size:14px;color:var(--gris2);line-height:1.7}
+.faq-item.open .faq-respuesta{max-height:300px}
+
+/* WHATSAPP FLOTANTE */
+.wa-float{position:fixed;bottom:90px;right:24px;z-index:99;display:flex;flex-direction:column;align-items:flex-end;gap:.5rem}
+.wa-bubble{background:#25d366;color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.4);cursor:pointer;text-decoration:none;transition:all .3s;animation:waPulse 2.5s infinite}
+.wa-bubble:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.5)}
+.wa-bubble svg{width:28px;height:28px}
+.wa-tooltip{background:var(--negro2);border:1px solid var(--borde);color:var(--blanco);font-size:13px;padding:6px 14px;border-radius:20px;white-space:nowrap;opacity:0;transform:translateX(10px);transition:all .3s;pointer-events:none}
+.wa-float:hover .wa-tooltip{opacity:1;transform:translateX(0)}
+@keyframes waPulse{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.4)}50%{box-shadow:0 4px 28px rgba(37,211,102,.7)}}
+
+@media(max-width:700px){
+  .counter-grid{grid-template-columns:repeat(2,1fr);gap:1rem}
+  .counter-num{font-size:38px}
+}
+
+/* MAPA Y HORARIOS */
+#ubicacion{background:var(--negro2)}
+.ubicacion-layout{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem;align-items:stretch}
+.mapa-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--borde);min-height:320px}
+.mapa-wrap iframe{width:100%;height:100%;min-height:320px;border:none;filter:invert(90%) hue-rotate(180deg)}
+.horarios-card{background:var(--negro3);border:1px solid var(--borde);border-radius:10px;padding:1.75rem;position:relative;overflow:hidden}
+.horarios-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--turquesa),var(--naranja))}
+.horarios-card h3{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--blanco);margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
+.horarios-card h3::before{content:'🕐';font-size:18px}
+.estado-taller{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:1.25rem;letter-spacing:.03em}
+.estado-abierto{background:var(--success-dim);color:var(--success);border:1px solid rgba(34,197,94,.25)}
+.estado-cerrado{background:var(--danger-dim);color:var(--danger);border:1px solid rgba(239,68,68,.25)}
+.estado-dot{width:7px;height:7px;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+.horario-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem .875rem;border-radius:6px;margin-bottom:.35rem;font-size:13px;transition:background .2s}
+.horario-row:hover{background:var(--negro4)}
+.horario-dia{color:var(--gris2);font-weight:500}
+.horario-hora{color:var(--blanco);font-weight:500;background:var(--negro4);padding:3px 10px;border-radius:12px;font-size:12px}
+.horario-row.hoy{background:var(--turquesa-dim);border:1px solid rgba(0,212,200,.2)}
+.horario-row.hoy .horario-dia{color:var(--turquesa);font-weight:700}
+.horario-row.hoy .horario-hora{background:var(--turquesa);color:var(--negro);font-weight:700}
+.horario-cerrado{color:var(--gris3)!important;background:var(--negro2)!important}
+.horario-cerrado-badge{background:var(--negro2);color:var(--gris3);padding:3px 10px;border-radius:12px;font-size:12px}
+.direccion-info{margin-top:1.25rem;padding:1rem;background:var(--negro4);border-radius:8px;border:1px solid var(--borde2)}
+.direccion-info p{font-size:13px;color:var(--gris2);margin-bottom:.5rem;display:flex;align-items:center;gap:.625rem;padding:.25rem 0}
+.direccion-info p:last-child{margin-bottom:0}
+.direccion-info a{color:var(--turquesa);text-decoration:none;font-size:13px;transition:color .2s}
+.direccion-info a:hover{color:var(--naranja)}
+@media(max-width:768px){.ubicacion-layout{grid-template-columns:1fr}}
+
+
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:700px){
+  .hero-stats{gap:1.5rem}
+  .form-row{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><img src="apple-touch-icon.png" alt="TechFix Pro" style="height:38px;width:38px;border-radius:6px;object-fit:contain;vertical-align:middle;margin-right:8px"><span style="color:var(--turquesa)">TECH</span><span style="color:var(--naranja)">FIX</span> <span style="color:var(--gris3);font-weight:400;font-size:16px">PRO</span></div>
+    <div class="nav-links">
+      <a href="#servicios">Servicios</a>
+      <a href="#proceso">Cómo funciona</a>
+      <a href="#testimonios">Testimonios</a>
+      <a href="#faq">FAQ</a>
+      <a href="cliente.html">Estado de mi equipo</a>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <a href="#solicitud" class="nav-cta"> Solicitar servicio</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-corner"></div>
+  <div class="hero-corner2"></div>
+  <div class="hero-inner">
+    <div class="hero-tag"><span>Reparación profesional</span></div>
+    <h1>Tu equipo<br><span class="accent-t">vuelve</span> a la<br><span class="accent-n">vida.</span></h1>
+    <p>Diagnóstico preciso, reparación rápida y garantía en cada trabajo. Computadoras, notebooks, PC de escritorio y periféricos.</p>
+    <div class="hero-btns">
+      <a href="#solicitud" class="btn-primary">Solicitar servicio</a>
+      <a href="#proceso" class="btn-secondary">Ver cómo funciona</a>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section id="servicios">
+  <div class="section-inner">
+    <p class="section-tag">Lo que hacemos</p>
+    <div class="line-accent"></div>
+    <h2 class="section-title">Servicios de reparación</h2>
+    <p class="section-sub">Trabajamos con todo tipo de equipos informáticos con herramientas profesionales y repuestos originales.</p>
+    <div class="servicios-grid fade-in">
+      <div class="servicio-card">
+        <div class="servicio-icon">💻</div>
+        <h3>Notebooks & Laptops</h3>
+        <p>Pantallas, teclados, bisagras, baterías, placas madre, puertos USB/HDMI y todo lo que necesite tu portátil.</p>
+        <div class="servicio-precio">Diagnóstico sin cargo · Presupuesto previo</div>
+      </div>
+      <div class="servicio-card">
+        <div class="servicio-icon">🖥️</div>
+        <h3>PC de Escritorio</h3>
+        <p>Armado, actualización, limpieza, cambio de componentes, fuentes de poder, placas de video y memoria RAM.</p>
+        <div class="servicio-precio">Presupuesto sin cargo · Sin obligación</div>
+      </div>
+      <div class="servicio-card">
+        <div class="servicio-icon">🔧</div>
+        <h3>Diagnóstico & Software</h3>
+        <p>Formateo, reinstalación de sistema operativo, eliminación de virus, recuperación de datos y optimización.</p>
+        <div class="servicio-precio">Presupuesto previo · Entrega en el día</div>
+      </div>
+      <div class="servicio-card">
+        <div class="servicio-icon">🖨️</div>
+        <h3>Periféricos & Monitores</h3>
+        <p>Reparación de monitores, impresoras, cargadores, fuentes externas y otros dispositivos de entrada/salida.</p>
+        <div class="servicio-precio">Presupuesto previo · Sin compromiso</div>
+      </div>
+      <div class="servicio-card">
+        <div class="servicio-icon">💾</div>
+        <h3>Recuperación de Datos</h3>
+        <p>Recuperamos archivos de discos dañados, pendrives corruptos, discos rígidos con sectores defectuosos.</p>
+        <div class="servicio-precio">Sin recuperación, sin cobro</div>
+      </div>
+      <div class="servicio-card">
+        <div class="servicio-icon">🌐</div>
+        <h3>Redes & Conectividad</h3>
+        <p>Configuración de redes Wi-Fi, routers, VPN, solución de problemas de conectividad y drivers de red.</p>
+        <div class="servicio-precio">Presupuesto previo · Servicio a domicilio</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section id="proceso">
+  <div class="section-inner">
+    <p class="section-tag">Cómo funciona</p>
+    <div class="line-accent"></div>
+    <h2 class="section-title">Simple y transparente</h2>
+    <p class="section-sub">Seguí el estado de tu equipo en todo momento. Sin sorpresas ni costos ocultos.</p>
+    <div class="proceso-steps fade-in">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Solicitás el servicio</h4>
+        <p>Completás el formulario o nos escribís. Te confirmamos disponibilidad en menos de 2hs.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Traés el equipo</h4>
+        <p>Lo dejás en nuestro taller. Emitimos una orden de trabajo y te damos un comprobante.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Diagnóstico</h4>
+        <p>Analizamos el problema y te enviamos el presupuesto detallado. Vos decidís si continuar.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Reparación</h4>
+        <p>Con tu aprobación trabajamos en el equipo. Te avisamos cuando esté listo.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <h4>Retiro</h4>
+        <p>Pasás a buscar tu equipo reparado. Incluye garantía escrita de 90 días.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLICITUD -->
+<section id="solicitud">
+  <div class="section-inner">
+    <p class="section-tag">Pedí tu turno</p>
+    <div class="line-accent"></div>
+    <h2 class="section-title">Solicitar servicio</h2>
+    <div class="form-layout fade-in">
+      <div class="form-info">
+        <h3>Te contactamos en menos de 2 horas</h3>
+        <p>Completá el formulario con los datos de tu equipo y el problema que presentar. Es rápido y sin compromiso.</p>
+        <div class="info-item">
+          <div class="info-dot"></div>
+          <p><strong style="color:var(--blanco)">Diagnóstico sin cargo:</strong> evaluamos tu equipo y te damos un presupuesto detallado antes de hacer cualquier trabajo.</p>
+        </div>
+        <div class="info-item">
+          <div class="info-dot"></div>
+          <p><strong style="color:var(--blanco)">Garantía de 90 días:</strong> todos nuestros trabajos incluyen garantía escrita sobre la reparación realizada.</p>
+        </div>
+        <div class="info-item">
+          <div class="info-dot"></div>
+          <p><strong style="color:var(--blanco)">Sin cobro si no hay solución:</strong> en recuperación de datos, si no lo logramos, no cobramos.</p>
+        </div>
+        <div class="info-item">
+          <div class="info-dot"></div>
+          <p><strong style="color:var(--blanco)">Seguimiento online:</strong> recibís el número de orden y podés consultar el estado de tu equipo en cualquier momento.</p>
+        </div>
+        <div style="margin-top:1.5rem;padding:1.25rem;background:rgba(0,212,200,0.06);border:1px solid var(--borde);border-radius:6px">
+          <p style="font-size:13px;color:var(--gris2)">Al enviar el formulario aceptás los <a href="#" onclick="abrirContrato(event)" style="color:var(--turquesa)">Términos y condiciones del servicio</a>. Podés leerlos antes de continuar.</p>
+        </div>
+      </div>
+      <div class="form-box">
+        <div id="form-solicitud">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Nombre *</label>
+              <input type="text" id="f-nombre" placeholder="Tu nombre">
+            </div>
+            <div class="form-field">
+              <label>Apellido *</label>
+              <input type="text" id="f-apellido" placeholder="Tu apellido">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Teléfono *</label>
+              <input type="tel" id="f-tel" placeholder="11 1234-5678">
+            </div>
+            <div class="form-field">
+              <label>Email *</label>
+              <input type="email" id="f-mail" placeholder="tu@correo.com">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Tipo de equipo *</label>
+            <select id="f-tipo">
+              <option value="">Seleccioná el tipo</option>
+              <option>Notebook / Laptop</option>
+              <option>PC de escritorio</option>
+              <option>Monitor</option>
+              <option>Impresora</option>
+              <option>Periférico / Otro</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Marca</label>
+              <input type="text" id="f-marca" placeholder="HP, Dell, Lenovo...">
+            </div>
+            <div class="form-field">
+              <label>Modelo</label>
+              <input type="text" id="f-modelo" placeholder="Ej: Pavilion 15">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Descripción del problema *</label>
+            <textarea id="f-desc" placeholder="Describí el problema con el mayor detalle posible: cuándo comenzó, qué hace o deja de hacer, si hubo algún golpe o líquido..."></textarea>
+          </div>
+          <div class="form-field">
+            <label>Urgencia</label>
+            <select id="f-urgencia">
+              <option value="normal">Normal (2-5 días hábiles)</option>
+              <option value="urgente">Urgente (24-48hs, sujeto a disponibilidad)</option>
+            </select>
+          </div>
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="chk-contrato">
+            <label for="chk-contrato">Leí y acepto los <a href="#" onclick="abrirContrato(event)">Términos y Condiciones del servicio</a>, incluyendo las normas de garantía y responsabilidad.</label>
+          </div>
+          <button class="btn-submit" onclick="enviarSolicitud()">ENVIAR SOLICITUD</button>
+        </div>
+        <div class="success-msg" id="success-msg">
+          <h4>¡Solicitud recibida!</h4>
+          <p>Nos comunicaremos con vos en menos de 2 horas para confirmar el turno y darte más información.</p>
+          <p style="margin-top:.75rem;color:var(--turquesa);font-weight:500" id="ot-generada"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTADOR ANIMADO -->
+<section id="contador">
+  <div class="section-inner">
+    <p class="section-tag">Números que hablan</p>
+    <div class="line-accent"></div>
+    <h2 class="section-title">Nuestra trayectoria</h2>
+    <div class="counter-grid">
+      <div class="counter-item">
+        <div><span class="counter-num" data-target="500">0</span><span class="counter-suffix">+</span></div>
+        <div class="counter-label">Equipos reparados</div>
+      </div>
+      <div class="counter-item">
+        <div><span class="counter-num" data-target="98">0</span><span class="counter-suffix">%</span></div>
+        <div class="counter-label">Clientes satisfechos</div>
+      </div>
+      <div class="counter-item">
+        <div><span class="counter-num" data-target="90">0</span><span class="counter-suffix">d</span></div>
+        <div class="counter-label">Días de garantía</div>
+      </div>
+      <div class="counter-item">
+        <div><span class="counter-num" data-target="48">0</span><span class="counter-suffix">hs</span></div>
+        <div class="counter-label">Tiempo promedio</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section id="testimonios">
+  <div class="section-inner">
+    <p class="section-tag">Lo que dicen nuestros clientes</p>
+    <div class="line-accent"></div>
+    <h2 class="section-title">Testimonios</h2>
+    <p class="section-sub">Experiencias reales de clientes que confiaron en nosotros.</p>
+
+    <!-- RESEÑAS DINÁMICAS -->
+    <div class="testi-grid fade-in" id="resenas-container">
+      <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--gris2);font-size:13px" id="resenas-loading">Cargando reseñas...</div>
+    </div>
+
+    <!-- PROMEDIO -->
+    <div id="resenas-promedio" style="display:none;text-align:center;margin-top:1.5rem;padding:1rem;background:var(--negro3);border:1px solid var(--borde);border-radius:8px;max-width:300px;margin-left:auto;margin-right:auto">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:42px;font-weight:700;color:var(--turquesa)" id="promedio-num">0</div>
+      <div style="color:var(--naranja);font-size:20px;margin:.25rem 0" id="promedio-stars">★★★★★</div>
+      <div style="font-size:12px;color:var(--gris2)" id="promedio-total">0 reseñas</div>
+    </div>
+
+    <!-- FORMULARIO DEJAR RESEÑA -->
+    <div style="margin-top:3rem;background:var(--negro3);border:1px solid var(--borde);border-radius:8px;padding:2rem;max-width:600px;margin-left:auto;margin-right:auto">
+      <h3 style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--blanco);margin-bottom:.5rem">¿Ya reparaste tu equipo con nosotros?</h3>
+      <p style="font-size:13px;color:var(--gris2);margin-bottom:1.5rem">Dejanos tu experiencia. Tu reseña aparecerá en el sitio luego de ser revisada.</p>
+
+      <div id="form-resena">
+        <!-- Estrellas interactivas -->
+        <div style="margin-bottom:1.25rem">
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gris2);margin-bottom:.5rem">Calificación *</label>
+          <div id="star-selector" style="display:flex;gap:.25rem;cursor:pointer">
+            <span class="star-btn" data-val="1" style="font-size:28px;color:var(--gris3);transition:color .15s">★</span>
+            <span class="star-btn" data-val="2" style="font-size:28px;color:var(--gris3);transition:color .15s">★</span>
+            <span class="star-btn" data-val="3" style="font-size:28px;color:var(--gris3);transition:color .15s">★</span>
+            <span class="star-btn" data-val="4" style="font-size:28px;color:var(--gris3);transition:color .15s">★</span>
+            <span class="star-btn" data-val="5" style="font-size:28px;color:var(--gris3);transition:color .15s">★</span>
+          </div>
+          <input type="hidden" id="r-estrellas" value="0">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gris2);margin-bottom:.4rem">Nombre *</label>
+            <input id="r-nombre" type="text" placeholder="Tu nombre" style="width:100%;background:var(--negro4);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:10px 12px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:14px;outline:none">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gris2);margin-bottom:.4rem">Equipo reparado</label>
+            <input id="r-equipo" type="text" placeholder="Ej: Notebook HP" style="width:100%;background:var(--negro4);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:10px 12px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:14px;outline:none">
+          </div>
+        </div>
+        <div style="margin-bottom:1.25rem">
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gris2);margin-bottom:.4rem">Tu experiencia *</label>
+          <textarea id="r-texto" placeholder="Contanos cómo fue tu experiencia con nosotros..." style="width:100%;background:var(--negro4);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:10px 12px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:90px"></textarea>
+        </div>
+        <div id="r-error" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:4px;padding:.625rem 1rem;font-size:13px;color:#ef4444;margin-bottom:1rem"></div>
+        <button onclick="enviarResena()" style="width:100%;background:linear-gradient(90deg,var(--turquesa3),var(--turquesa2));color:var(--blanco);border:none;border-radius:4px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:all .2s" id="btn-resena">ENVIAR RESEÑA</button>
+      </div>
+
+      <div id="resena-success" style="display:none;text-align:center;padding:1.5rem 0">
+        <div style="font-size:40px;margin-bottom:.75rem">🙌</div>
+        <h4 style="font-family:'Rajdhani',sans-serif;font-size:22px;color:var(--turquesa);margin-bottom:.5rem">¡Gracias por tu reseña!</h4>
+        <p style="font-size:13px;color:var(--gris2)">Será revisada y publicada en breve. ¡Tu opinión nos ayuda a seguir mejorando!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <p class="section-tag">Preguntas frecuentes</p>
+    <div class="line-accent"></div>
+    <h2 class="section-title">¿Tenés dudas?</h2>
+    <p class="section-sub">Respondemos las consultas más comunes. Si no encontrás lo que buscás, escribinos por WhatsApp.</p>
+    <div class="faq-list fade-in">
+      <div class="faq-item">
+        <div class="faq-pregunta" onclick="toggleFaq(this)">
+          <h4>¿El diagnóstico tiene costo?</h4>
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-respuesta"><p>No. El diagnóstico básico es completamente gratuito y sin compromiso. Solo te cobraremos si aprobás el presupuesto y decidís continuar con la reparación.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-pregunta" onclick="toggleFaq(this)">
+          <h4>¿Cuánto tarda una reparación?</h4>
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-respuesta"><p>El tiempo promedio es de 24 a 48 horas hábiles desde que aprobás el presupuesto. Algunos trabajos pueden resolverse el mismo día, mientras que otros que requieren repuestos especiales pueden demorar un poco más. Siempre te avisamos.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-pregunta" onclick="toggleFaq(this)">
+          <h4>¿Qué pasa si no se puede reparar?</h4>
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-respuesta"><p>Si después del diagnóstico determinamos que el equipo no tiene solución viable, te lo comunicamos sin costo adicional. En el caso de recuperación de datos, si no logramos recuperarlos, no cobramos.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-pregunta" onclick="toggleFaq(this)">
+          <h4>¿Tienen garantía los trabajos?</h4>
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-respuesta"><p>Sí. Todos nuestros trabajos tienen una garantía escrita de 90 días corridos sobre la falla específicamente reparada. Si el mismo problema vuelve a aparecer dentro de ese período, lo solucionamos sin cargo.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-pregunta" onclick="toggleFaq(this)">
+          <h4>¿Cómo puedo saber el estado de mi equipo?</h4>
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-respuesta"><p>Podés consultar el estado en tiempo real desde nuestro <a href="cliente.html" style="color:var(--turquesa)">portal de seguimiento</a> ingresando el número de tu orden de trabajo. También te notificamos por email cada vez que hay una novedad.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-pregunta" onclick="toggleFaq(this)">
+          <h4>¿Qué formas de pago aceptan?</h4>
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-respuesta"><p>Aceptamos efectivo, transferencia bancaria y tarjeta de débito/crédito. El pago se realiza al momento de retirar el equipo, una vez que confirmás que todo funciona correctamente.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UBICACIÓN Y HORARIOS -->
+<section id="ubicacion">
+  <div class="section-inner">
+    <p class="section-tag">Dónde estamos</p>
+    <div class="line-accent"></div>
+    <h2 class="section-title">Ubicación y horarios</h2>
+    <div class="ubicacion-layout fade-in">
+      <div class="mapa-wrap">
+        <iframe src="https://maps.google.com/maps?q=Ernesto+Nelson+57,+Castelar,+Buenos+Aires,+Argentina&output=embed&z=16" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="horarios-card">
+        <h3>Horarios de atención</h3>
+        <div id="estado-taller-badge"></div>
+        <div id="horarios-lista"></div>
+        <div class="direccion-info">
+          <p>📍 Ernesto Nelson 57, Castelar, Buenos Aires</p>
+          <p>📞 <a href="tel:+5491126972862">+54 9 11 2697-2862</a></p>
+          <p>💬 <a href="https://wa.me/5491126972862" target="_blank">Escribinos por WhatsApp</a></p>
+          <p>🗺 <a href="https://maps.google.com/?q=Ernesto+Nelson+57,+Castelar,+Buenos+Aires" target="_blank">Ver en Google Maps</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHATSAPP FLOTANTE -->
+<div class="wa-float">
+  <div class="wa-tooltip">¿Necesitás ayuda?</div>
+  <a class="wa-bubble" href="https://wa.me/5491126972862?text=Hola%20TechFix%20Pro%2C%20necesito%20ayuda%20con%20mi%20equipo." target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+</div>
+
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo"><span>TECH</span><span>FIX</span> <span style="color:var(--gris3);font-weight:400;font-size:14px">PRO</span></div>
+      <p style="font-size:12px;color:var(--gris3);margin-top:4px">Reparación profesional de equipos informáticos</p>
+    </div>
+    <div class="footer-links">
+      <a href="#servicios">Servicios</a>
+      <a href="#" onclick="abrirContrato(event)">Términos y condiciones</a>
+      <a href="admin.html">Administración</a>
+    </div>
+    <p class="footer-copy">© 2026 TechFix Pro — Todos los derechos reservados</p>
+  </div>
+</footer>
+
+<!-- ADMIN LINK -->
+<a href="admin.html" class="admin-link">
+  <div class="admin-dot"></div>
+  Panel de administración
+</a>
+
+<!-- MODAL CONTRATO -->
+<div class="modal-overlay" id="modal-contrato">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>Contrato de Servicio</h2>
+      <button class="modal-close" onclick="cerrarContrato()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="contrato-title">TÉRMINOS Y CONDICIONES DEL SERVICIO</div>
+      <div class="contrato-sub">TechFix Pro — Versión vigente: Enero 2026<br>Lea detenidamente antes de dejar su equipo o enviar una solicitud.</div>
+
+      <div class="contrato-art">
+        <h3>Artículo 1 — Definiciones</h3>
+        <p>A los efectos del presente contrato se entiende por:</p>
+        <ul>
+          <li><strong>"El Taller":</strong> TechFix Pro, prestador del servicio de reparación.</li>
+          <li><strong>"El Cliente":</strong> persona física o jurídica que solicita el servicio.</li>
+          <li><strong>"El Equipo":</strong> dispositivo informático entregado para diagnóstico o reparación.</li>
+          <li><strong>"Orden de Trabajo (OT)":</strong> documento generado al ingreso del equipo que identifica y ampara el servicio.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 2 — Ingreso del equipo</h3>
+        <ul>
+          <li>Al dejar el equipo, El Cliente recibirá una Orden de Trabajo con número único que servirá como comprobante obligatorio para el retiro.</li>
+          <li>El Cliente deberá declarar el estado previo visible del equipo (roturas, rayones, piezas faltantes). El Taller no se responsabiliza por daños estéticos preexistentes no declarados.</li>
+          <li>El Cliente deberá <strong>hacer copia de seguridad de sus datos</strong> antes de entregar el equipo. El Taller no se responsabiliza por pérdida de información durante los trabajos de reparación, salvo en el servicio específico de recuperación de datos.</li>
+          <li>Se informará al cliente el tiempo estimado de entrega al momento del ingreso, sujeto a disponibilidad de repuestos.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 3 — Diagnóstico y presupuesto</h3>
+        <ul>
+          <li>El diagnóstico básico es <strong>sin cargo</strong>. En casos que requieran desarme completo, se informará previamente si existe costo de diagnóstico.</li>
+          <li>El presupuesto es comunicado al cliente por el medio de contacto informado (WhatsApp, email o teléfono) antes de iniciar cualquier reparación.</li>
+          <li>El cliente tiene un plazo de <strong>48 horas hábiles</strong> para aprobar o rechazar el presupuesto. Pasado ese plazo, se considerará rechazado.</li>
+          <li>Si el cliente rechaza el presupuesto, deberá abonar un <strong>costo de diagnóstico</strong> (informado previamente) antes de retirar el equipo.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 4 — Reparación y repuestos</h3>
+        <ul>
+          <li>Todos los repuestos utilizados son nuevos o reacondicionados, informando al cliente en cada caso.</li>
+          <li>El Taller se reserva el derecho de utilizar repuestos alternativos de calidad equivalente, previa aprobación del cliente.</li>
+          <li>En algunos equipos, la apertura puede implicar la <strong>pérdida de la garantía de fábrica</strong>. El cliente será informado de esta posibilidad antes del inicio del trabajo.</li>
+          <li>El Taller no garantiza la reparación si el equipo presenta daños por agua, cortocircuito severo o intervenciones previas de terceros, pero igualmente se realizará el mejor esfuerzo posible.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 5 — Garantía</h3>
+        <ul>
+          <li>Todos los trabajos realizados tienen una <strong>garantía de 90 días corridos</strong> desde la fecha de entrega, sobre la falla específicamente reparada.</li>
+          <li>La garantía cubre defectos de mano de obra y falla del repuesto instalado. No cubre daños por mal uso, golpes, líquidos o intervención de terceros.</li>
+          <li>Para hacer efectiva la garantía, el cliente deberá presentar la Orden de Trabajo original.</li>
+          <li>La garantía se anula si el equipo fue intervenido por personas ajenas al taller durante el período de garantía.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 6 — Plazos de entrega</h3>
+        <ul>
+          <li>Los plazos informados son estimativos y pueden variar por disponibilidad de repuestos o complejidad técnica imprevista.</li>
+          <li>El Taller se compromete a comunicar al cliente cualquier demora significativa antes de que venza el plazo original.</li>
+          <li>El servicio urgente (24-48hs) tiene disponibilidad limitada y puede implicar un recargo adicional informado al momento de la consulta.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 7 — Retiro del equipo</h3>
+        <ul>
+          <li>El cliente será notificado cuando el equipo esté listo para retirar.</li>
+          <li>El equipo debe ser retirado dentro de los <strong>30 días corridos</strong> desde la notificación. Pasado ese plazo, se aplicará un cargo de almacenamiento.</li>
+          <li>Si el equipo no es retirado dentro de los <strong>90 días</strong>, El Taller podrá disponer del mismo para cubrir los costos del servicio.</li>
+          <li>El retiro se realiza exclusivamente con la presentación de la Orden de Trabajo. En caso de pérdida, se aplicará un proceso de verificación de identidad.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 8 — Responsabilidades y limitaciones</h3>
+        <ul>
+          <li>El Taller no se responsabiliza por pérdida de datos, software o configuraciones durante los trabajos, salvo acuerdo expreso de respaldo previo.</li>
+          <li>La responsabilidad máxima de El Taller ante cualquier reclamo no superará el monto abonado por el servicio.</li>
+          <li>El Taller no se responsabiliza por demoras en la reparación causadas por falta de provisión de repuestos por parte de terceros.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 9 — Pagos</h3>
+        <ul>
+          <li>El pago se realiza al momento del retiro del equipo, salvo acuerdo previo distinto.</li>
+          <li>Se aceptan efectivo, transferencia bancaria y tarjeta de débito/crédito (con posible recargo según el medio).</li>
+          <li>No se entregará el equipo sin cancelación total del servicio.</li>
+          <li>Los precios del presupuesto aprobado son fijos y no varían, excepto que surjan fallas adicionales no detectadas en el diagnóstico inicial, caso en que se consultará al cliente.</li>
+        </ul>
+      </div>
+
+      <div class="contrato-art">
+        <h3>Artículo 10 — Privacidad de datos</h3>
+        <p>Los datos personales del cliente (nombre, teléfono, email) son utilizados exclusivamente para la gestión del servicio y comunicaciones relacionadas. No son compartidos con terceros. El cliente puede solicitar la eliminación de sus datos en cualquier momento.</p>
+      </div>
+
+      <div style="margin-top:2rem;padding:1rem;background:rgba(255,107,26,0.08);border:1px solid rgba(255,107,26,0.2);border-radius:6px">
+        <p style="font-size:12px;color:var(--gris2);text-align:center">Al aceptar estos términos, el cliente declara haber leído, comprendido y aceptado todas las condiciones aquí establecidas. Este contrato es válido a partir del momento del ingreso del equipo o envío de la solicitud online.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="cerrarContrato()">Cerrar</button>
+      <button class="btn-accept" onclick="aceptarContrato()">Acepto los términos</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDIxusiIA-Zl0inSrL2T-7OwvhAIvIu2bY",
+  authDomain: "techfixpro-4338f.firebaseapp.com",
+  projectId: "techfixpro-4338f",
+  storageBucket: "techfixpro-4338f.firebasestorage.app",
+  messagingSenderId: "31911783369",
+  appId: "1:31911783369:web:72628b1b7ba7055be11618"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// EmailJS
+emailjs.init('5EmEhV_vQmQc9U8lI');
+
+window.abrirContrato=function(e){e&&e.preventDefault();document.getElementById('modal-contrato').classList.add('open')}
+window.cerrarContrato=function(){document.getElementById('modal-contrato').classList.remove('open')}
+window.aceptarContrato=function(){document.getElementById('chk-contrato').checked=true;cerrarContrato()}
+
+window.enviarSolicitud=async function(){
+  const nombre=document.getElementById('f-nombre').value.trim();
+  const apellido=document.getElementById('f-apellido').value.trim();
+  const tel=document.getElementById('f-tel').value.trim();
+  const mail=document.getElementById('f-mail').value.trim();
+  const tipo=document.getElementById('f-tipo').value;
+  const desc=document.getElementById('f-desc').value.trim();
+  const chk=document.getElementById('chk-contrato').checked;
+  if(!nombre||!apellido||!tel||!mail||!tipo||!desc){alert('Por favor completá todos los campos obligatorios.');return}
+  if(!chk){alert('Debés aceptar los Términos y Condiciones para continuar.');return}
+
+  const btn=document.querySelector('.btn-submit');
+  btn.textContent='Enviando...';btn.disabled=true;
+
+  try {
+    const solicitud={
+      nombre,apellido,tel,mail,tipo,
+      marca:document.getElementById('f-marca').value.trim(),
+      modelo:document.getElementById('f-modelo').value.trim(),
+      desc,
+      urgencia:document.getElementById('f-urgencia').value,
+      fecha:new Date().toISOString().slice(0,10),
+      estado:'Pendiente revisión',
+      creadoEn:serverTimestamp()
+    };
+    const docRef=await addDoc(collection(db,'solicitudes'),solicitud);
+    const id='SOL-'+docRef.id.slice(-6).toUpperCase();
+
+    // Notificar al admin por email
+    try{
+      await emailjs.send('service_928zkc2','template_aa3u2q1',{
+        cliente_nombre: nombre+' '+apellido,
+        cliente_tel:    tel,
+        cliente_email:  mail,
+        equipo_tipo:    tipo,
+        equipo_marca:   [document.getElementById('f-marca').value.trim(), document.getElementById('f-modelo').value.trim()].filter(Boolean).join(' ')||'—',
+        urgencia:       document.getElementById('f-urgencia').value==='urgente'?'URGENTE':'Normal',
+        problema:       desc,
+        solicitud_id:   id,
+      });
+    }catch(emailErr){
+      console.warn('Email al admin no enviado:',emailErr);
+    }
+
+    document.getElementById('form-solicitud').style.display='none';
+    const sm=document.getElementById('success-msg');
+    sm.style.display='block';
+    document.getElementById('ot-generada').textContent='Tu código de solicitud: '+id;
+  } catch(err){
+    console.error(err);
+    alert('Hubo un error al enviar la solicitud. Por favor intentá de nuevo.');
+    btn.textContent='ENVIAR SOLICITUD';btn.disabled=false;
+  }
+}
+
+// ===== RESEÑAS =====
+const COLORES_AVATAR=['linear-gradient(135deg,#007a74,#00d4c8)','linear-gradient(135deg,#e85a0a,#ff6b1a)','linear-gradient(135deg,#7c3aed,#4f46e5)','linear-gradient(135deg,#065f46,#10b981)','linear-gradient(135deg,#1e40af,#60a5fa)'];
+
+// Cargar reseñas aprobadas en tiempo real
+onSnapshot(collection(db,'resenas'), snap=>{
+  const aprobadas=snap.docs.map(d=>({_id:d.id,...d.data()}))
+    .filter(r=>r.estado==='aprobada')
+    .sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+
+  const container=document.getElementById('resenas-container');
+  const promedioWrap=document.getElementById('resenas-promedio');
+
+  if(!aprobadas.length){
+    container.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--gris2);font-size:14px">Aún no hay reseñas publicadas. ¡Sé el primero en dejar la tuya!</div>';
+    promedioWrap.style.display='none';
+    return;
+  }
+
+  // Promedio
+  const prom=(aprobadas.reduce((s,r)=>s+(r.estrellas||5),0)/aprobadas.length).toFixed(1);
+  document.getElementById('promedio-num').textContent=prom;
+  document.getElementById('promedio-stars').textContent='★'.repeat(Math.round(prom))+'☆'.repeat(5-Math.round(prom));
+  document.getElementById('promedio-total').textContent=aprobadas.length+' reseña'+(aprobadas.length!==1?'s':'');
+  promedioWrap.style.display='block';
+
+  container.innerHTML=aprobadas.map((r,i)=>{
+    const inicial=(r.nombre||'?')[0].toUpperCase();
+    const color=COLORES_AVATAR[i%COLORES_AVATAR.length];
+    const stars='★'.repeat(r.estrellas||5)+'☆'.repeat(5-(r.estrellas||5));
+    return '<div class="testi-card">'
+      +'<div class="testi-quote">&ldquo;</div>'
+      +'<div class="testi-stars" style="color:var(--naranja)">'+stars+'</div>'
+      +'<p class="testi-text">'+(r.texto||'')+'</p>'
+      +'<div class="testi-author">'
+      +'<div class="testi-avatar" style="background:'+color+'">'+inicial+'</div>'
+      +'<div><div class="testi-name">'+(r.nombre||'Cliente')+'</div>'
+      +'<div class="testi-equipo">'+(r.equipo||'')+'</div></div>'
+      +'</div></div>';
+  }).join('');
+});
+
+// Estrellas interactivas
+let estrellasSeleccionadas=0;
+document.querySelectorAll('.star-btn').forEach(star=>{
+  star.addEventListener('mouseover',()=>{
+    const val=parseInt(star.dataset.val);
+    document.querySelectorAll('.star-btn').forEach(s=>{
+      s.style.color=parseInt(s.dataset.val)<=val?'var(--naranja)':'var(--gris3)';
+    });
+  });
+  star.addEventListener('mouseout',()=>{
+    document.querySelectorAll('.star-btn').forEach(s=>{
+      s.style.color=parseInt(s.dataset.val)<=estrellasSeleccionadas?'var(--naranja)':'var(--gris3)';
+    });
+  });
+  star.addEventListener('click',()=>{
+    estrellasSeleccionadas=parseInt(star.dataset.val);
+    document.getElementById('r-estrellas').value=estrellasSeleccionadas;
+    document.querySelectorAll('.star-btn').forEach(s=>{
+      s.style.color=parseInt(s.dataset.val)<=estrellasSeleccionadas?'var(--naranja)':'var(--gris3)';
+    });
+  });
+});
+
+window.enviarResena=async function(){
+  const nombre=document.getElementById('r-nombre').value.trim();
+  const texto=document.getElementById('r-texto').value.trim();
+  const equipo=document.getElementById('r-equipo').value.trim();
+  const estrellas=parseInt(document.getElementById('r-estrellas').value)||0;
+  const errEl=document.getElementById('r-error');
+
+  if(!nombre||!texto){errEl.textContent='Por favor completá tu nombre y tu experiencia.';errEl.style.display='block';return}
+  if(!estrellas){errEl.textContent='Por favor seleccioná una calificación.';errEl.style.display='block';return}
+  errEl.style.display='none';
+
+  const btn=document.getElementById('btn-resena');
+  btn.textContent='Enviando...';btn.disabled=true;
+
+  try{
+    await addDoc(collection(db,'resenas'),{
+      nombre,texto,equipo,estrellas,
+      estado:'pendiente',
+      fecha:new Date().toISOString().slice(0,10),
+      creadoEn:serverTimestamp()
+    });
+
+    // Notificar al admin
+    try{
+      const estrellasStr='★'.repeat(estrellas)+'☆'.repeat(5-estrellas);
+      await emailjs.send('service_928zkc2','template_aa3u2q1',{
+        cliente_nombre:nombre,
+        cliente_tel:'—',
+        cliente_email:'—',
+        equipo_tipo:estrellasStr+' Nueva resena pendiente',
+        equipo_marca:equipo||'—',
+        urgencia:'Pendiente de aprobacion en el panel admin',
+        problema:texto,
+        solicitud_id:'RESENA — Aprobar en: https://abacosdigitales.github.io/site.github.io/TECHFIX/admin.html',
+      });
+    }catch(e){console.warn('Email no enviado:',e);}
+
+    document.getElementById('form-resena').style.display='none';
+    document.getElementById('resena-success').style.display='block';
+  }catch(e){
+    errEl.textContent='Error al enviar. Intentá de nuevo.';errEl.style.display='block';
+    btn.textContent='ENVIAR RESEÑA';btn.disabled=false;
+  }
+}
+
+// ===== CONTADOR ANIMADO =====
+function animarContador(el){
+  const target=parseInt(el.dataset.target);
+  const duration=1800;
+  const step=target/duration*16;
+  let current=0;
+  const timer=setInterval(()=>{
+    current+=step;
+    if(current>=target){current=target;clearInterval(timer);}
+    el.textContent=Math.floor(current);
+  },16);
+}
+
+const counterObserver=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.counter-num').forEach(animarContador);
+      counterObserver.disconnect();
+    }
+  });
+},{threshold:0.3});
+const counterSection=document.getElementById('contador');
+if(counterSection)counterObserver.observe(counterSection);
+
+// ===== FAQ =====
+window.toggleFaq=function(el){
+  const item=el.parentElement;
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+
+// Animaciones scroll
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.15});
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+
+// Cerrar modal con Escape
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarContrato()});
+document.getElementById('modal-contrato').addEventListener('click',e=>{if(e.target.id==='modal-contrato')cerrarContrato()});
+
+// ===== HORARIOS =====
+(function(){
+  var HORARIOS=[
+    {dia:'Lunes',    open:9, close:18},
+    {dia:'Martes',   open:9, close:18},
+    {dia:'Miercoles',open:9, close:18},
+    {dia:'Jueves',   open:9, close:18},
+    {dia:'Viernes',  open:9, close:18},
+    {dia:'Sabado',   open:10,close:13},
+    {dia:'Domingo',  open:null,close:null},
+  ];
+  var arNow=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Argentina/Buenos_Aires'}));
+  var dow=arNow.getDay();
+  var hora=arNow.getHours()+(arNow.getMinutes()/60);
+  var idx=dow===0?6:dow-1;
+  var hoy=HORARIOS[idx];
+  var abierto=hoy.open!==null&&hora>=hoy.open&&hora<hoy.close;
+
+  var badge=document.getElementById('estado-taller-badge');
+  if(badge){
+    badge.innerHTML='<span class="estado-taller '+(abierto?'estado-abierto':'estado-cerrado')+'">'
+      +'<span class="estado-dot" style="background:'+(abierto?'var(--success)':'var(--danger)')+'"></span>'
+      +(abierto?'Abierto ahora':'Cerrado ahora')
+      +'</span>';
+  }
+
+  var lista=document.getElementById('horarios-lista');
+  if(lista){
+    lista.innerHTML=HORARIOS.map(function(h,i){
+      var esHoy=i===idx;
+      var horaStr=h.open!==null?(h.open+':00 - '+h.close+':00 hs'):'Cerrado';
+      return '<div class="horario-row'+(esHoy?' hoy':'')+'">'
+        +'<span class="horario-dia">'+h.dia+(esHoy?' <small style="color:var(--turquesa);font-size:10px;font-weight:700;margin-left:4px">(hoy)</small>':'')+'</span>'
+        +'<span class="'+(h.open===null?'horario-cerrado-badge':'horario-hora')+'">'+ horaStr+'</span>'
+        +'</div>';
+    }).join('');
+  }
+})();
+
+</script>
+</body>
+</html>

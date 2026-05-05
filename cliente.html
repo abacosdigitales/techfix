@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechFix Pro — Estado de tu equipo</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --negro:#0a0a0a;--negro2:#111111;--negro3:#1a1a1a;--negro4:#222222;
+  --turquesa:#00d4c8;--turquesa2:#00b8ae;--turquesa3:#007a74;--turquesa-dim:rgba(0,212,200,0.10);
+  --naranja:#ff6b1a;--naranja2:#e85a0a;--naranja-dim:rgba(255,107,26,0.10);
+  --blanco:#ffffff;--gris1:#cccccc;--gris2:#888888;--gris3:#444444;
+  --borde:rgba(0,212,200,0.15);--borde2:rgba(255,255,255,0.06);
+  --success:#22c55e;--success-dim:rgba(34,197,94,0.12);
+  --danger:#ef4444;--danger-dim:rgba(239,68,68,0.12);
+  --warn:#f59e0b;--warn-dim:rgba(245,158,11,0.12);
+  --info:#60a5fa;--info-dim:rgba(96,165,250,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{height:100%}
+body{background:var(--negro);color:var(--blanco);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(0,212,200,0.015) 40px,rgba(0,212,200,0.015) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,212,200,0.015) 40px,rgba(0,212,200,0.015) 41px);pointer-events:none;z-index:0}
+
+/* NAV */
+nav{background:rgba(10,10,10,0.95);border-bottom:1px solid var(--borde);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:900px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo img{width:34px;height:34px;border-radius:6px;object-fit:contain}
+.logo-text{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700}
+.logo-text .t{color:var(--turquesa)}
+.logo-text .f{color:var(--naranja)}
+.nav-link{color:var(--gris2);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:0.05em;transition:color .2s}
+.nav-link:hover{color:var(--turquesa)}
+
+/* MAIN */
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1.5rem;position:relative;z-index:1}
+.container{width:100%;max-width:600px}
+
+/* BUSCAR */
+.search-card{background:var(--negro2);border:1px solid var(--borde);border-radius:12px;padding:2.5rem 2rem;text-align:center;margin-bottom:1.5rem}
+.search-icon{font-size:40px;margin-bottom:1rem;opacity:.8}
+.search-card h1{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--blanco);margin-bottom:.5rem}
+.search-card p{font-size:14px;color:var(--gris2);margin-bottom:2rem;line-height:1.6}
+.input-wrap{display:flex;gap:.625rem}
+.input-wrap input{flex:1;background:var(--negro4);border:1px solid var(--borde2);border-radius:6px;padding:12px 16px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .2s;letter-spacing:0.05em;text-transform:uppercase}
+.input-wrap input:focus{border-color:var(--turquesa3)}
+.input-wrap input::placeholder{text-transform:none;letter-spacing:0;color:var(--gris3)}
+.btn-buscar{background:var(--naranja);color:var(--blanco);border:none;border-radius:6px;padding:12px 24px;font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-buscar:hover{background:var(--naranja2);transform:translateY(-1px)}
+.btn-buscar:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.search-hint{font-size:12px;color:var(--gris3);margin-top:.75rem}
+.search-hint span{color:var(--turquesa);font-weight:500}
+
+/* ERROR */
+.error-msg{display:none;background:var(--danger-dim);border:1px solid rgba(239,68,68,0.3);border-radius:6px;padding:.75rem 1rem;font-size:13px;color:var(--danger);margin-top:1rem;text-align:left}
+.error-msg.show{display:block}
+
+/* RESULTADO */
+.result-card{display:none;background:var(--negro2);border:1px solid var(--borde);border-radius:12px;overflow:hidden;animation:fadeUp .4s ease}
+.result-card.show{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.result-header{padding:1.5rem 1.75rem;border-bottom:1px solid var(--borde2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem}
+.result-ot{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--turquesa)}
+.result-fecha{font-size:12px;color:var(--gris2)}
+
+/* ESTADO PROGRESS */
+.estado-section{padding:1.5rem 1.75rem;border-bottom:1px solid var(--borde2)}
+.estado-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gris2);margin-bottom:.75rem}
+.progress-bar{display:flex;align-items:center;gap:0;margin-bottom:1rem;overflow-x:auto;padding-bottom:4px}
+.progress-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:60px;position:relative}
+.progress-step:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--gris3);z-index:0}
+.progress-step.done:not(:last-child)::after{background:var(--turquesa)}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;position:relative;z-index:1;border:2px solid var(--gris3);background:var(--negro3);transition:all .3s}
+.progress-step.done .step-dot{background:var(--turquesa);border-color:var(--turquesa);color:var(--negro)}
+.progress-step.current .step-dot{background:var(--naranja);border-color:var(--naranja);color:var(--blanco);box-shadow:0 0 12px rgba(255,107,26,.4)}
+.progress-step.cancelled .step-dot{background:var(--danger-dim);border-color:var(--danger);color:var(--danger)}
+.step-name{font-size:10px;color:var(--gris3);margin-top:5px;text-align:center;white-space:nowrap;font-weight:500}
+.progress-step.done .step-name{color:var(--turquesa)}
+.progress-step.current .step-name{color:var(--naranja);font-weight:600}
+
+.estado-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600}
+.estado-badge::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.b-pend{background:var(--warn-dim);color:var(--warn)}.b-pend::before{background:var(--warn)}
+.b-proc{background:var(--info-dim);color:var(--info)}.b-proc::before{background:var(--info)}
+.b-list{background:var(--turquesa-dim);color:var(--turquesa)}.b-list::before{background:var(--turquesa)}
+.b-entr{background:var(--success-dim);color:var(--success)}.b-entr::before{background:var(--success)}
+.b-canc{background:rgba(100,100,100,.15);color:var(--gris2)}.b-canc::before{background:var(--gris2)}
+
+/* INFO ROWS */
+.info-section{padding:1.25rem 1.75rem;border-bottom:1px solid var(--borde2)}
+.info-section:last-of-type{border-bottom:none}
+.info-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--turquesa2);margin-bottom:.875rem}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.info-field{background:var(--negro3);border-radius:6px;padding:.625rem .875rem}
+.info-field.full{grid-column:1/-1}
+.info-field-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gris3);margin-bottom:.25rem}
+.info-field-value{font-size:13px;color:var(--gris1);font-weight:500;line-height:1.4}
+.diag-box{background:rgba(0,212,200,.06);border:1px solid rgba(0,212,200,.15);border-radius:6px;padding:.875rem;margin-top:.5rem}
+.diag-box .info-field-label{color:var(--turquesa3)}
+.diag-box .info-field-value{color:var(--blanco)}
+
+/* LIVE INDICATOR */
+.live-dot{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--success);font-weight:500}
+.live-dot::before{content:'';width:6px;height:6px;background:var(--success);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* APROBACIÓN */
+.aprobacion-box{margin:1.25rem 1.75rem;background:var(--negro3);border:1px solid var(--borde);border-radius:8px;padding:1.5rem}
+.aprobacion-box h4{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--blanco);margin-bottom:.5rem}
+.aprobacion-box p{font-size:13px;color:var(--gris2);margin-bottom:1.25rem;line-height:1.6}
+.aprobacion-precio{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--naranja);margin-bottom:1.25rem}
+.aprobacion-precio span{font-size:14px;color:var(--gris2);font-family:'Inter',sans-serif;font-weight:400;display:block;margin-top:.25rem}
+.aprobacion-btns{display:flex;gap:.75rem;flex-wrap:wrap}
+.btn-aprobar{flex:1;background:var(--success);color:var(--blanco);border:none;border-radius:6px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:all .2s}
+.btn-aprobar:hover{background:#16a34a;transform:translateY(-1px)}
+.btn-rechazar{flex:1;background:transparent;color:var(--danger);border:1px solid var(--danger);border-radius:6px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:all .2s}
+.btn-rechazar:hover{background:var(--danger-dim)}
+.aprobacion-ok{text-align:center;padding:1.5rem;background:var(--success-dim);border:1px solid rgba(34,197,94,.3);border-radius:8px;margin:1.25rem 1.75rem}
+.aprobacion-ok h4{font-family:'Rajdhani',sans-serif;font-size:22px;color:var(--success);margin-bottom:.5rem}
+.aprobacion-ok p{font-size:13px;color:var(--gris2)}
+.aprobacion-rechazada{text-align:center;padding:1.5rem;background:var(--danger-dim);border:1px solid rgba(239,68,68,.3);border-radius:8px;margin:1.25rem 1.75rem}
+.aprobacion-rechazada h4{font-family:'Rajdhani',sans-serif;font-size:22px;color:var(--danger);margin-bottom:.5rem}
+.aprobacion-rechazada p{font-size:13px;color:var(--gris2)}
+
+
+.btn-nueva{display:block;width:100%;background:transparent;border:1px solid var(--borde2);color:var(--gris2);border-radius:6px;padding:10px;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;margin-top:1rem;text-align:center}
+.btn-nueva:hover{border-color:var(--turquesa3);color:var(--turquesa)}
+
+/* FOOTER */
+footer{text-align:center;padding:1.5rem;font-size:12px;color:var(--gris3);position:relative;z-index:1}
+footer a{color:var(--gris3);text-decoration:none}
+footer a:hover{color:var(--turquesa)}
+
+@media(max-width:500px){
+  .input-wrap{flex-direction:column}
+  .info-grid{grid-template-columns:1fr}
+  .info-field.full{grid-column:1}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="https://abacosdigitales.github.io/site.github.io/TECHFIX" class="logo">
+      <img src="apple-touch-icon.png" alt="TechFix Pro">
+      <div class="logo-text"><span class="t">TECH</span><span class="f">FIX</span></div>
+    </a>
+    <a href="https://abacosdigitales.github.io/site.github.io/TECHFIX" class="nav-link">← Volver al inicio</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <!-- BUSCAR -->
+    <div class="search-card">
+      <div class="search-icon">🔍</div>
+      <h1>Estado de tu equipo</h1>
+      <p>Ingresá tu número de orden de trabajo para ver el estado actual de tu reparación en tiempo real.</p>
+      <div class="input-wrap">
+        <input type="text" id="input-ot" placeholder="Ej: IVCECC" maxlength="6" onkeydown="if(event.key==='Enter')buscarOT()">
+        <button class="btn-buscar" id="btn-buscar" onclick="buscarOT()">CONSULTAR</button>
+      </div>
+      <div class="error-msg" id="error-msg"></div>
+      <p class="search-hint">El número de OT se encuentra en tu comprobante: <span>OT-XXXXXX</span></p>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <div>
+          <div class="result-ot" id="res-num">OT-XXXXXX</div>
+          <div class="result-fecha" id="res-fecha"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <span class="live-dot">En vivo</span>
+          <span class="estado-badge" id="res-estado-badge"></span>
+        </div>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="estado-section">
+        <div class="estado-label">Progreso de la reparación</div>
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <!-- EQUIPO -->
+      <div class="info-section">
+        <div class="info-title">Equipo</div>
+        <div class="info-grid">
+          <div class="info-field full"><div class="info-field-label">Dispositivo</div><div class="info-field-value" id="res-equipo">—</div></div>
+          <div class="info-field"><div class="info-field-label">N° Serie</div><div class="info-field-value" id="res-serie">—</div></div>
+          <div class="info-field"><div class="info-field-label">Fecha ingreso</div><div class="info-field-value" id="res-fecha-ing">—</div></div>
+        </div>
+      </div>
+
+      <!-- SERVICIO -->
+      <div class="info-section">
+        <div class="info-title">Detalle del servicio</div>
+        <div class="info-field full" style="background:var(--negro3);border-radius:6px;padding:.625rem .875rem;margin-bottom:.75rem">
+          <div class="info-field-label">Problema reportado</div>
+          <div class="info-field-value" id="res-problema">—</div>
+        </div>
+        <div class="diag-box" id="diag-wrap" style="display:none">
+          <div class="info-field-label">Diagnóstico / trabajo realizado</div>
+          <div class="info-field-value" id="res-diag">—</div>
+        </div>
+      </div>
+
+      <div id="aprobacion-wrap"></div>
+
+      <div style="padding:1rem 1.75rem">
+        <button class="btn-nueva" onclick="nuevaBusqueda()">Consultar otra orden →</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <p>TechFix Pro · <a href="https://abacosdigitales.github.io/site.github.io/TECHFIX">Inicio</a> · <a href="https://abacosdigitales.github.io/site.github.io/TECHFIX#solicitud">Solicitar servicio</a></p>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyDIxusiIA-Zl0inSrL2T-7OwvhAIvIu2bY",
+  authDomain:"techfixpro-4338f.firebaseapp.com",
+  projectId:"techfixpro-4338f",
+  storageBucket:"techfixpro-4338f.firebasestorage.app",
+  messagingSenderId:"31911783369",
+  appId:"1:31911783369:web:72628b1b7ba7055be11618"
+};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+const ESTADOS=['Pendiente','En proceso','Listo','Entregado'];
+const ESTADOS_CLASS={Pendiente:'b-pend','En proceso':'b-proc',Listo:'b-list',Entregado:'b-entr',Cancelado:'b-canc'};
+const ESTADOS_ICON={Pendiente:'📋','En proceso':'🔧',Listo:'✓',Entregado:'🎉',Cancelado:'✕'};
+
+let unsubOT=null;
+
+function fmt(f){if(!f)return'—';const[y,m,d]=f.split('-');return d+'/'+m+'/'+y}
+
+window.buscarOT=function(){
+  const raw=document.getElementById('input-ot').value.trim().toUpperCase().replace(/^OT-?/,'');
+  const err=document.getElementById('error-msg');
+  const btn=document.getElementById('btn-buscar');
+  err.classList.remove('show');
+
+  if(!raw||raw.length<4){
+    err.textContent='Ingresá un número de orden válido (mínimo 4 caracteres).';
+    err.classList.add('show');
+    return;
+  }
+
+  btn.textContent='Buscando...';btn.disabled=true;
+  if(unsubOT)unsubOT();
+
+  // Buscar en tiempo real en todas las ordenes
+  unsubOT=onSnapshot(collection(db,'ordenes'),snap=>{
+    const ot=snap.docs.map(d=>({_id:d.id,...d.data()}))
+      .find(o=>(o._id||'').slice(-6).toUpperCase()===raw);
+
+    btn.textContent='CONSULTAR';btn.disabled=false;
+
+    if(!ot){
+      err.textContent='No encontramos una orden con ese número. Verificá que esté bien escrito.';
+      err.classList.add('show');
+      document.getElementById('result-card').classList.remove('show');
+      return;
+    }
+    err.classList.remove('show');
+    mostrarResultado(ot);
+  },err2=>{
+    btn.textContent='CONSULTAR';btn.disabled=false;
+    err.textContent='Error al conectar. Verificá tu conexión e intentá de nuevo.';
+    err.classList.add('show');
+  });
+}
+
+let otActual=null;
+
+function mostrarResultado(ot){
+  otActual=ot;
+  const card=document.getElementById('result-card');
+  const otNum=(ot._id||'').slice(-6).toUpperCase();
+
+  document.getElementById('res-num').textContent='OT-'+otNum;
+  document.getElementById('res-fecha').textContent='Ingreso: '+fmt(ot.fecha);
+  document.getElementById('res-equipo').textContent=ot.equipo||'—';
+  document.getElementById('res-serie').textContent=ot.serie||'—';
+  document.getElementById('res-fecha-ing').textContent=fmt(ot.fecha);
+  document.getElementById('res-problema').textContent=ot.problema||'—';
+
+  const diagWrap=document.getElementById('diag-wrap');
+  if(ot.diag){document.getElementById('res-diag').textContent=ot.diag;diagWrap.style.display='block';}
+  else{diagWrap.style.display='none';}
+
+  const badge=document.getElementById('res-estado-badge');
+  badge.className='estado-badge '+(ESTADOS_CLASS[ot.estado]||'b-pend');
+  badge.textContent=ot.estado||'—';
+
+  const pb=document.getElementById('progress-bar');
+  if(ot.estado==='Cancelado'){
+    pb.innerHTML='<div style="text-align:center;padding:.5rem;color:var(--danger);font-size:13px;width:100%">Orden cancelada</div>';
+  } else {
+    const currentIdx=ESTADOS.indexOf(ot.estado);
+    pb.innerHTML=ESTADOS.map((e,i)=>{
+      let cls='progress-step';
+      if(i<currentIdx)cls+=' done';
+      else if(i===currentIdx)cls+=' current';
+      return '<div class="'+cls+'"><div class="step-dot">'+ESTADOS_ICON[e]+'</div><div class="step-name">'+e+'</div></div>';
+    }).join('');
+  }
+
+  // Sección de aprobación si está Pendiente con presupuesto
+  const apWrap=document.getElementById('aprobacion-wrap');
+  if(ot.estado==='Pendiente'&&ot.costo>0){
+    apWrap.innerHTML='<div class="aprobacion-box">'
+      +'<h4>Presupuesto listo</h4>'
+      +'<p>Revisá el diagnóstico y el presupuesto. Necesitamos tu confirmación para continuar con la reparación.</p>'
+      +'<div class="aprobacion-precio">$'+Number(ot.costo).toLocaleString('es-AR')+'<span>Precio total de la reparación</span></div>'
+      +'<div class="aprobacion-btns">'
+      +'<button class="btn-aprobar" onclick="aprobarOT()">Aprobar reparacion</button>'
+      +'<button class="btn-rechazar" onclick="rechazarOT()">Rechazar presupuesto</button>'
+      +'</div></div>';
+  } else if(ot.estado==='Cancelado'){
+    apWrap.innerHTML='<div class="aprobacion-rechazada"><h4>Presupuesto rechazado</h4><p>Rechazaste el presupuesto. Podés pasar a retirar tu equipo. Se aplicará el costo de diagnóstico.</p></div>';
+  } else {
+    apWrap.innerHTML='';
+  }
+
+  card.classList.add('show');
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+window.aprobarOT=async function(){
+  if(!otActual)return;
+  const btn=document.querySelector('.btn-aprobar');
+  if(btn){btn.textContent='Procesando...';btn.disabled=true;}
+  try{
+    await updateDoc(doc(db,'ordenes',otActual._id),{estado:'En proceso'});
+    document.getElementById('aprobacion-wrap').innerHTML=
+      '<div class="aprobacion-ok"><h4>Reparacion aprobada!</h4><p>Comenzaremos a trabajar en tu equipo. Te notificaremos cuando este listo.</p></div>';
+  }catch(e){if(btn){btn.textContent='Aprobar reparacion';btn.disabled=false;}alert('Error al procesar. Intenta de nuevo.');}
+}
+
+window.rechazarOT=async function(){
+  if(!otActual)return;
+  if(!confirm('Estas seguro que queres rechazar el presupuesto?'))return;
+  const btn=document.querySelector('.btn-rechazar');
+  if(btn){btn.textContent='Procesando...';btn.disabled=true;}
+  try{
+    await updateDoc(doc(db,'ordenes',otActual._id),{estado:'Cancelado'});
+    document.getElementById('aprobacion-wrap').innerHTML=
+      '<div class="aprobacion-rechazada"><h4>Presupuesto rechazado</h4><p>Recibimos tu respuesta. Podes pasar a retirar tu equipo. Se aplicara el costo de diagnostico.</p></div>';
+  }catch(e){if(btn){btn.textContent='Rechazar presupuesto';btn.disabled=false;}alert('Error al procesar. Intenta de nuevo.');}
+}
+
+// Manejar aprobacion/rechazo por URL (desde link del email)
+(function(){
+  const params=new URLSearchParams(window.location.search);
+  const otParam=params.get('ot');
+  const accion=params.get('accion');
+  if(otParam&&accion){
+    document.getElementById('input-ot').value=otParam;
+    window.buscarOT();
+    const timer=setInterval(()=>{
+      if(otActual){
+        clearInterval(timer);
+        if(accion==='aprobar')window.aprobarOT();
+        else if(accion==='rechazar')window.rechazarOT();
+      }
+    },500);
+    setTimeout(()=>clearInterval(timer),10000);
+  }
+})();
+
+window.nuevaBusqueda=function(){
+  if(unsubOT){unsubOT();unsubOT=null;}
+  document.getElementById('input-ot').value='';
+  document.getElementById('result-card').classList.remove('show');
+  document.getElementById('error-msg').classList.remove('show');
+  document.getElementById('input-ot').focus();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Foco automático al cargar
+document.getElementById('input-ot').focus();
+</script>
+</body>
+</html>

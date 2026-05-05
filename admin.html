@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechFix Pro — Panel</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --negro:#0a0a0a;--negro2:#111111;--negro3:#1a1a1a;--negro4:#222222;--negro5:#2a2a2a;
+  --turquesa:#00d4c8;--turquesa2:#00b8ae;--turquesa3:#007a74;--turquesa-dim:rgba(0,212,200,0.12);
+  --naranja:#ff6b1a;--naranja2:#e85a0a;--naranja-dim:rgba(255,107,26,0.12);
+  --blanco:#ffffff;--gris1:#cccccc;--gris2:#888888;--gris3:#444444;
+  --borde:rgba(0,212,200,0.12);--borde2:rgba(255,255,255,0.06);
+  --success:#22c55e;--success-dim:rgba(34,197,94,0.12);
+  --danger:#ef4444;--danger-dim:rgba(239,68,68,0.12);
+  --warn:#f59e0b;--warn-dim:rgba(245,158,11,0.12);
+  --info:#60a5fa;--info-dim:rgba(96,165,250,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{height:100%}
+body{background:var(--negro);color:var(--blanco);font-family:'Inter',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
+#login-screen{display:none;position:fixed;inset:0;z-index:999;background:var(--negro);align-items:center;justify-content:center}
+#login-screen.show{display:flex}
+#app-wrapper{display:none;width:100%;min-height:100vh}
+#app-wrapper.show{display:flex}
+.login-box{background:var(--negro2);border:1px solid var(--borde);border-radius:12px;padding:2.5rem 2rem;width:380px;max-width:94vw;text-align:center}
+.login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:.25rem}
+.login-logo img{width:44px;height:44px;border-radius:8px;object-fit:contain}
+.login-logo-text{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700}
+.login-logo-text span:first-child{color:var(--turquesa)}
+.login-logo-text span:last-child{color:var(--naranja)}
+.login-sub{font-size:12px;color:var(--gris2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2rem}
+.login-field{margin-bottom:1rem;text-align:left}
+.login-field label{display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gris2);margin-bottom:.4rem}
+.login-field input{width:100%;background:var(--negro4);border:1px solid var(--borde2);border-radius:4px;padding:11px 14px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+.login-field input:focus{border-color:var(--turquesa3)}
+.login-btn{width:100%;background:linear-gradient(90deg,var(--turquesa3),var(--turquesa2));color:var(--blanco);border:none;border-radius:4px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.1em;cursor:pointer;transition:all .2s;margin-top:.25rem}
+.login-btn:hover{opacity:.9;transform:translateY(-1px)}
+.login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.login-error{display:none;background:var(--danger-dim);border:1px solid rgba(239,68,68,0.3);border-radius:4px;padding:.625rem 1rem;font-size:13px;color:var(--danger);margin-top:.75rem;text-align:left}
+.login-error.show{display:block}
+.sidebar{width:240px;min-height:100vh;background:var(--negro2);border-right:1px solid var(--borde);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh}
+.sidebar-logo{padding:1.25rem;border-bottom:1px solid var(--borde);display:flex;align-items:center;gap:10px}
+.sidebar-logo img{width:36px;height:36px;border-radius:6px;object-fit:contain;flex-shrink:0}
+.logo-text{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700}
+.logo-text span:first-child{color:var(--turquesa)}
+.logo-text span:nth-child(2){color:var(--naranja)}
+.logo-sub{font-size:10px;color:var(--gris2);letter-spacing:0.08em;text-transform:uppercase;margin-top:1px}
+.sidebar-nav{flex:1;padding:1rem 0;overflow-y:auto}
+.nav-group-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gris3);padding:0 1.25rem;margin:.75rem 0 .35rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.6rem 1.25rem;cursor:pointer;transition:all .15s;border-left:2px solid transparent;color:var(--gris2);font-size:13px;font-weight:500;text-decoration:none}
+.nav-item:hover{color:var(--blanco);background:rgba(255,255,255,0.04)}
+.nav-item.active{color:var(--turquesa);border-left-color:var(--turquesa);background:var(--turquesa-dim)}
+.nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.sidebar-footer{padding:1rem 1.25rem;border-top:1px solid var(--borde)}
+.user-card{display:flex;align-items:center;gap:10px}
+.user-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--blanco);flex-shrink:0}
+.avatar-admin{background:linear-gradient(135deg,var(--turquesa3),var(--naranja2))}
+.avatar-tecnico{background:linear-gradient(135deg,#1d4ed8,#7c3aed)}
+.user-name{font-size:13px;font-weight:500;color:var(--blanco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role-txt{font-size:11px;color:var(--gris2)}
+.logout-btn{background:none;border:1px solid var(--gris3);color:var(--gris2);padding:5px 10px;border-radius:4px;font-size:12px;cursor:pointer;transition:all .15s;flex-shrink:0}
+.logout-btn:hover{border-color:var(--danger);color:var(--danger)}
+.role-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:0.06em;text-transform:uppercase}
+.role-admin{background:var(--naranja-dim);color:var(--naranja)}
+.role-tecnico{background:var(--info-dim);color:var(--info)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{padding:.875rem 1.75rem;border-bottom:1px solid var(--borde2);display:flex;align-items:center;justify-content:space-between;background:var(--negro2);position:sticky;top:0;z-index:10}
+.page-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--blanco)}
+.topbar-right{display:flex;align-items:center;gap:.75rem}
+.badge-notif{background:var(--naranja);color:var(--blanco);font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px}
+.btn{padding:8px 16px;border-radius:4px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;letter-spacing:0.02em}
+.btn-t{background:var(--turquesa-dim);color:var(--turquesa);border:1px solid rgba(0,212,200,0.25)}
+.btn-t:hover{background:rgba(0,212,200,0.2)}
+.btn-n{background:var(--naranja);color:var(--blanco)}
+.btn-n:hover{background:var(--naranja2)}
+.btn-ghost{background:transparent;color:var(--gris2);border:1px solid var(--gris3)}
+.btn-ghost:hover{color:var(--blanco);border-color:var(--gris2)}
+.btn-danger{background:var(--danger-dim);color:var(--danger);border:1px solid rgba(239,68,68,0.25)}
+.btn-danger:hover{background:rgba(239,68,68,0.2)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-icon{width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.content{padding:1.5rem 1.75rem;flex:1;overflow-y:auto}
+.view{display:none}.view.active{display:block}
+.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--negro3);border:1px solid var(--borde2);border-radius:8px;padding:1.25rem;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.stat-card.c-t::after{background:var(--turquesa)}.stat-card.c-n::after{background:var(--naranja)}
+.stat-card.c-g::after{background:var(--success)}.stat-card.c-w::after{background:var(--warn)}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gris2);margin-bottom:.5rem}
+.stat-val{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;line-height:1;color:var(--blanco)}
+.stat-sub{font-size:11px;color:var(--gris3);margin-top:.35rem}
+.panel{background:var(--negro3);border:1px solid var(--borde2);border-radius:8px;overflow:hidden;margin-bottom:1.5rem}
+.panel-header{padding:.875rem 1.25rem;border-bottom:1px solid var(--borde2);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--blanco)}
+.toolbar{display:flex;gap:.625rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.search-box{flex:1;min-width:180px;position:relative}
+.search-box input{width:100%;background:var(--negro4);border:1px solid var(--borde2);border-radius:4px;padding:8px 12px 8px 34px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .15s}
+.search-box input:focus{border-color:var(--turquesa3)}
+.search-box::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none}
+.filter-sel{background:var(--negro4);border:1px solid var(--borde2);border-radius:4px;padding:8px 12px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:13px;outline:none;cursor:pointer}
+.filter-sel option{background:var(--negro3)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gris2);border-bottom:1px solid var(--borde2);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--borde2);vertical-align:middle;color:var(--gris1)}
+tr:last-child td{border:none}
+tr:hover td{background:rgba(255,255,255,0.02);color:var(--blanco)}
+.ot-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--turquesa)}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;letter-spacing:0.03em;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.b-pend{background:var(--warn-dim);color:var(--warn)}.b-pend::before{background:var(--warn)}
+.b-proc{background:var(--info-dim);color:var(--info)}.b-proc::before{background:var(--info)}
+.b-list{background:var(--turquesa-dim);color:var(--turquesa)}.b-list::before{background:var(--turquesa)}
+.b-entr{background:var(--success-dim);color:var(--success)}.b-entr::before{background:var(--success)}
+.b-canc{background:rgba(100,100,100,0.15);color:var(--gris2)}.b-canc::before{background:var(--gris2)}
+.b-sol{background:var(--naranja-dim);color:var(--naranja)}.b-sol::before{background:var(--naranja)}
+.actions{display:flex;gap:4px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--negro2);border:1px solid var(--borde);border-radius:10px;width:580px;max-width:96vw;max-height:92vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-hdr{padding:1.25rem 1.5rem;border-bottom:1px solid var(--borde);display:flex;justify-content:space-between;align-items:center}
+.modal-hdr h3{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--turquesa)}
+.modal-close{background:none;border:none;color:var(--gris2);font-size:20px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--naranja)}
+.modal-bd{padding:1.5rem;overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--negro5) var(--negro3)}
+.modal-ft{padding:1rem 1.5rem;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:.625rem}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gris2);margin-bottom:.4rem}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--negro4);border:1px solid var(--borde2);border-radius:4px;padding:9px 12px;color:var(--blanco);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--turquesa3)}
+.fg select option{background:var(--negro3)}
+.fg textarea{resize:vertical;min-height:70px}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--gris3)}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.det-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.6rem 0;border-bottom:1px solid var(--borde2);gap:1rem}
+.det-row:last-child{border:none}
+.det-k{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--gris2);white-space:nowrap;flex-shrink:0}
+.det-v{font-size:13px;color:var(--blanco);text-align:right;max-width:65%}
+.sol-card{background:var(--negro4);border:1px solid var(--borde2);border-radius:6px;padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;gap:1rem;align-items:flex-start}
+.sol-info{flex:1;min-width:0}
+.sol-title{font-weight:500;color:var(--blanco);font-size:14px;margin-bottom:.25rem}
+.sol-meta{font-size:12px;color:var(--gris2)}
+.sol-actions{display:flex;gap:.5rem;flex-shrink:0}
+.tecnico-card{background:var(--negro4);border:1px solid var(--borde2);border-radius:6px;padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;align-items:center;gap:1rem}
+.tecnico-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#7c3aed);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--blanco);flex-shrink:0}
+.tecnico-info{flex:1;min-width:0}
+.tecnico-nombre{font-weight:500;color:var(--blanco);font-size:14px}
+.tecnico-email{font-size:12px;color:var(--gris2)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--gris2)}
+.empty-state .es-icon{font-size:36px;margin-bottom:.75rem;opacity:.5}
+.empty-state p{font-size:13px}
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 18px;border-radius:6px;font-size:13px;font-weight:500;display:none;max-width:340px}
+.toast.show{display:block;animation:toastIn .3s ease}
+.toast-ok{background:var(--success-dim);border:1px solid var(--success);color:var(--success)}
+.toast-err{background:var(--danger-dim);border:1px solid var(--danger);color:var(--danger)}
+@keyframes toastIn{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--negro3)}
+::-webkit-scrollbar-thumb{background:var(--negro5);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--turquesa3)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="apple-touch-icon.png" alt="TechFix">
+      <div class="login-logo-text"><span>TECH</span><span>FIX</span></div>
+    </div>
+    <div class="login-sub">Acceso al panel</div>
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="tu@correo.com" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')intentarLogin()">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="intentarLogin()">INGRESAR</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-wrapper">
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="apple-touch-icon.png" alt="TechFix Pro">
+    <div>
+      <div class="logo-text"><span>TECH</span><span>FIX</span></div>
+      <div class="logo-sub">Panel</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">Principal</div>
+    <a class="nav-item active" onclick="showView('dashboard',this)"><span class="nav-icon">📊</span>Dashboard</a>
+    <a class="nav-item" onclick="showView('ordenes',this)"><span class="nav-icon">📋</span>Órdenes de Trabajo</a>
+    <a class="nav-item admin-only" onclick="showView('solicitudes',this)"><span class="nav-icon">📩</span>Solicitudes web <span id="sol-badge" class="badge-notif" style="margin-left:auto;display:none"></span></a>
+    <div class="nav-group-label">Gestión</div>
+    <a class="nav-item" onclick="showView('clientes',this)"><span class="nav-icon">👤</span>Clientes</a>
+    <a class="nav-item admin-only" onclick="showView('tecnicos',this)"><span class="nav-icon">🔧</span>Técnicos</a>
+    <a class="nav-item admin-only" onclick="showView('resenas',this)"><span class="nav-icon">⭐</span>Reseñas</a>
+    <a class="nav-item admin-only" onclick="showView('estadisticas',this)"><span class="nav-icon">📈</span>Estadísticas</a>
+    <div class="nav-group-label admin-only">Sitios</div>
+    <a class="nav-item admin-only" href="https://abacosdigitales.github.io/site.github.io/TECHFIX" target="_blank"><span class="nav-icon">🛠️</span>TechFix Pro</a>
+    <a class="nav-item admin-only" href="https://abacosdigitales.github.io/site.github.io/cliente.html" target="_blank"><span class="nav-icon">👁</span>Portal cliente</a>
+    <a class="nav-item admin-only" href="https://abacosdigitales.github.io/site.github.io/" target="_blank"><span class="nav-icon">🌐</span>Ábacos Digitales</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar avatar-admin" id="user-avatar">A</div>
+      <div style="flex:1;min-width:0">
+        <div class="user-name" id="user-nombre">—</div>
+        <div class="user-role-txt"><span class="role-badge role-admin" id="user-rol-badge">Admin</span></div>
+      </div>
+      <button class="logout-btn" onclick="cerrarSesion()">↩</button>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div id="fb-status" style="font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;background:rgba(245,158,11,0.15);color:#f59e0b;">⏳ Conectando...</div>
+    </div>
+    <div class="topbar-right">
+      <span id="fecha-top" style="font-size:12px;color:var(--gris2)"></span>
+      <button class="btn btn-n admin-only" onclick="abrirNuevaOrden()">+ Nueva OT</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="stats-row">
+        <div class="stat-card c-t"><div class="stat-label">Total OT</div><div class="stat-val" id="d-total">0</div><div class="stat-sub" id="d-sub">Historial completo</div></div>
+        <div class="stat-card c-w"><div class="stat-label">Pendientes</div><div class="stat-val" id="d-pend">0</div><div class="stat-sub">Esperando diagnóstico</div></div>
+        <div class="stat-card c-n"><div class="stat-label">En proceso</div><div class="stat-val" id="d-proc">0</div><div class="stat-sub">En reparación activa</div></div>
+        <div class="stat-card c-g"><div class="stat-label">Listos / Entregados</div><div class="stat-val" id="d-list">0</div><div class="stat-sub">Para retirar o cerradas</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Últimas órdenes</div>
+            <button class="btn btn-t btn-sm" onclick="showView('ordenes',document.querySelectorAll('.nav-item')[1])">Ver todas</button>
+          </div>
+          <div id="dash-ultimas" style="padding:.5rem 0"></div>
+        </div>
+        <div class="panel admin-only">
+          <div class="panel-header">
+            <div class="panel-title">Solicitudes web</div>
+            <button class="btn btn-t btn-sm" onclick="showView('solicitudes',document.querySelectorAll('.nav-item')[2])">Ver todas</button>
+          </div>
+          <div id="dash-solicitudes" style="padding:.75rem 1.25rem"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDENES -->
+    <div class="view" id="view-ordenes">
+      <div class="toolbar">
+        <div class="search-box"><input type="text" id="buscar-ot" placeholder="Buscar cliente, equipo..." oninput="renderOrdenes()"></div>
+        <select class="filter-sel" id="filtro-est" onchange="renderOrdenes()">
+          <option value="">Todos los estados</option>
+          <option>Pendiente</option><option>En proceso</option><option>Listo</option><option>Entregado</option><option>Cancelado</option>
+        </select>
+        <button class="btn btn-n admin-only" onclick="abrirNuevaOrden()">+ Nueva OT</button>
+        <button class="btn btn-ghost admin-only" onclick="exportarCSV()">↓ Exportar</button>
+      </div>
+      <div class="panel">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>N° OT</th><th>Cliente</th><th>Equipo</th><th>Problema</th><th>Ingreso</th><th>Técnico</th><th>Estado</th><th>Costo</th><th></th></tr></thead>
+            <tbody id="ot-body"></tbody>
+          </table>
+          <div class="empty-state" id="ot-empty" style="display:none"><div class="es-icon">📋</div><p>No hay órdenes de trabajo.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOLICITUDES -->
+    <div class="view" id="view-solicitudes">
+      <div style="margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center">
+        <p style="color:var(--gris2);font-size:13px">Solicitudes enviadas desde el sitio web.</p>
+        <button class="btn btn-ghost" onclick="limpiarSolicitudes()">Limpiar procesadas</button>
+      </div>
+      <div id="sol-lista"></div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="view" id="view-clientes">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Clientes registrados</div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Cliente</th><th>Teléfono</th><th>Email</th><th>OT totales</th><th>Última visita</th></tr></thead>
+            <tbody id="cli-body"></tbody>
+          </table>
+          <div class="empty-state" id="cli-empty" style="display:none"><div class="es-icon">👤</div><p>No hay clientes registrados.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TÉCNICOS -->
+    <div class="view" id="view-tecnicos">
+      <div style="margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center">
+        <p style="color:var(--gris2);font-size:13px">Gestioná los técnicos con acceso al panel.</p>
+        <button class="btn btn-n" onclick="abrirModalTecnico()">+ Agregar técnico</button>
+      </div>
+      <div id="tecnicos-lista"></div>
+    </div>
+
+    <!-- RESEÑAS -->
+    <div class="view" id="view-resenas">
+      <div style="margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem">
+        <p style="color:var(--gris2);font-size:13px">Reseñas enviadas por clientes. Aprobá las que quieras publicar en el sitio.</p>
+        <div style="display:flex;gap:.5rem">
+          <select class="filter-sel" id="filtro-resena" onchange="renderResenas()">
+            <option value="">Todas</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="aprobada">Aprobadas</option>
+            <option value="rechazada">Rechazadas</option>
+          </select>
+        </div>
+      </div>
+      <div id="resenas-admin-lista"></div>
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+    <div class="view" id="view-estadisticas">
+      <!-- Periodo selector -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">
+        <p style="color:var(--gris2);font-size:13px">Resumen de actividad del taller.</p>
+        <div style="display:flex;gap:.5rem">
+          <select class="filter-sel" id="est-periodo" onchange="renderEstadisticas()">
+            <option value="3">Últimos 3 meses</option>
+            <option value="6" selected>Últimos 6 meses</option>
+            <option value="12">Último año</option>
+            <option value="0">Todo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- KPI row -->
+      <div class="stats-row" style="margin-bottom:1.25rem" id="est-kpis"></div>
+
+      <!-- Charts row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">OT por mes</div></div>
+          <div style="padding:1.25rem"><canvas id="chart-ot-mes" height="200"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Distribución por estado</div></div>
+          <div style="padding:1.25rem;display:flex;align-items:center;justify-content:center"><canvas id="chart-estados" height="200"></canvas></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Ingresos por mes ($)</div></div>
+          <div style="padding:1.25rem"><canvas id="chart-ingresos" height="200"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Ranking de técnicos</div></div>
+          <div style="padding:1.25rem" id="ranking-tecnicos"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL OT -->
+<div class="modal-overlay" id="modal-ot">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="m-titulo">Nueva Orden de Trabajo</h3><button class="modal-close" onclick="cerrar('modal-ot')">✕</button></div>
+    <div class="modal-bd">
+      <div class="fg-row">
+        <div class="fg"><label>Cliente *</label><input id="m-cliente" placeholder="Nombre completo"></div>
+        <div class="fg"><label>Teléfono</label><input id="m-tel" placeholder="11 1234-5678"></div>
+      </div>
+      <div class="fg"><label>Email del cliente</label><input id="m-email" type="email" placeholder="correo@ejemplo.com"></div>
+      <div class="fg-row">
+        <div class="fg"><label>Equipo *</label><input id="m-equipo" placeholder="Notebook HP..."></div>
+        <div class="fg"><label>N° Serie</label><input id="m-serie" placeholder="Opcional"></div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Fecha ingreso</label><input id="m-fecha" type="date"></div>
+        <div class="fg"><label>Estado</label>
+          <select id="m-estado"><option>Pendiente</option><option>En proceso</option><option>Listo</option><option>Entregado</option><option>Cancelado</option></select>
+        </div>
+      </div>
+      <div class="fg"><label>Técnico asignado</label><select id="m-tecnico"><option value="">Sin asignar</option></select></div>
+      <div class="fg"><label>Problema reportado *</label><textarea id="m-problema" placeholder="Descripción del problema..."></textarea></div>
+      <div class="fg"><label>Diagnóstico / trabajo realizado</label><textarea id="m-diag" placeholder="Diagnóstico técnico..."></textarea></div>
+
+      <!-- DESGLOSE DE COSTOS - solo admin -->
+      <div style="background:var(--negro4);border:1px solid rgba(0,212,200,0.15);border-radius:6px;padding:1rem;margin-bottom:1rem">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--turquesa);margin-bottom:.875rem">Desglose de costos internos</div>
+        <div class="fg-row">
+          <div class="fg"><label>Mano de obra ($)</label><input id="m-costo-mano" type="number" placeholder="0" oninput="calcularTotal()"></div>
+          <div class="fg"><label>Repuestos / Partes ($)</label><input id="m-costo-partes" type="number" placeholder="0" oninput="calcularTotal()"></div>
+        </div>
+        <div class="fg-row">
+          <div class="fg"><label>Viáticos / Otros ($)</label><input id="m-costo-otros" type="number" placeholder="0" oninput="calcularTotal()"></div>
+          <div class="fg"><label>Costo total interno ($)</label><input id="m-costo-total-interno" type="number" placeholder="0" readonly style="background:var(--negro3);color:var(--gris2);cursor:not-allowed"></div>
+        </div>
+        <div style="height:1px;background:var(--borde2);margin:.5rem 0"></div>
+        <div class="fg-row">
+          <div class="fg"><label style="color:var(--naranja)">Precio al cliente ($)</label><input id="m-costo" type="number" placeholder="0" oninput="calcularRentabilidad()"></div>
+          <div class="fg"><label style="color:var(--success)">Rentabilidad ($)</label><input id="m-rentabilidad" type="number" placeholder="0" readonly style="background:var(--negro3);cursor:not-allowed" id="m-rentabilidad"></div>
+        </div>
+      </div>
+
+      <div class="fg"><label>Notas internas</label><input id="m-notas" placeholder="Observaciones..."></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="cerrar('modal-ot')">Cancelar</button>
+      <button class="btn btn-n" onclick="guardarOT()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="modal-overlay" id="modal-det">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="det-titulo">Detalle</h3><button class="modal-close" onclick="cerrar('modal-det')">✕</button></div>
+    <div class="modal-bd" id="det-body"></div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="cerrar('modal-det')">Cerrar</button>
+      <button class="btn btn-ghost" id="det-print-btn">🖨 Imprimir</button>
+      <button class="btn btn-t" id="det-edit-btn">Editar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TÉCNICO NUEVO -->
+<div class="modal-overlay" id="modal-tecnico">
+  <div class="modal" style="width:420px">
+    <div class="modal-hdr"><h3>Agregar técnico</h3><button class="modal-close" onclick="cerrar('modal-tecnico')">✕</button></div>
+    <div class="modal-bd">
+      <p style="font-size:13px;color:var(--gris2);margin-bottom:1.25rem;line-height:1.6">El técnico podrá ingresar al panel y solo verá las OT que le asignes.</p>
+      <div class="fg"><label>Nombre completo *</label><input id="t-nombre" placeholder="Nombre del técnico"></div>
+      <div class="fg"><label>Email *</label><input id="t-email" type="email" placeholder="tecnico@correo.com"></div>
+      <div class="fg"><label>Contraseña inicial *</label><input id="t-pass" type="password" placeholder="Mínimo 6 caracteres"></div>
+      <div style="background:var(--warn-dim);border:1px solid rgba(245,158,11,0.25);border-radius:4px;padding:.75rem 1rem;font-size:12px;color:var(--warn);margin-top:.5rem">⚠ Compartí las credenciales con el técnico de forma segura.</div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="cerrar('modal-tecnico')">Cancelar</button>
+      <button class="btn btn-n" onclick="crearTecnico()">Crear cuenta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ACTUALIZAR OT (técnico) -->
+<div class="modal-overlay" id="modal-tec-ot">
+  <div class="modal" style="width:440px">
+    <div class="modal-hdr"><h3 id="tec-ot-titulo">Actualizar OT</h3><button class="modal-close" onclick="cerrar('modal-tec-ot')">✕</button></div>
+    <div class="modal-bd">
+      <div class="fg"><label>Estado</label>
+        <select id="tec-estado"><option>Pendiente</option><option>En proceso</option><option>Listo</option><option>Entregado</option><option>Cancelado</option></select>
+      </div>
+      <div class="fg"><label>Diagnóstico / trabajo realizado</label><textarea id="tec-diag" placeholder="Actualizá el diagnóstico..."></textarea></div>
+      <div class="fg"><label>Notas internas</label><input id="tec-notas" placeholder="Observaciones..."></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="cerrar('modal-tec-ot')">Cancelar</button>
+      <button class="btn btn-n" onclick="guardarActualizacionTecnico()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig={apiKey:"AIzaSyDIxusiIA-Zl0inSrL2T-7OwvhAIvIu2bY",authDomain:"techfixpro-4338f.firebaseapp.com",projectId:"techfixpro-4338f",storageBucket:"techfixpro-4338f.firebasestorage.app",messagingSenderId:"31911783369",appId:"1:31911783369:web:72628b1b7ba7055be11618"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+
+// ===== EMAILJS =====
+emailjs.init('5EmEhV_vQmQc9U8lI');
+
+async function enviarNotificacion(ot, estadoAnterior){
+  // Solo enviar si hay email del cliente y el estado cambió
+  if(!ot.email || ot.email.trim()==='' ) return;
+  if(estadoAnterior && estadoAnterior===ot.estado) return;
+  try{
+    await emailjs.send('service_928zkc2','template_1av53iv',{
+      cliente_nombre: ot.cliente||'Cliente',
+      cliente_email:  ot.email,
+      equipo:         ot.equipo||'—',
+      estado:         ot.estado||'—',
+      diagnostico:    ot.diag?`Diagnóstico: ${ot.diag}`:'',
+    });
+    console.log('Email enviado a',ot.email);
+  }catch(e){
+    console.warn('Email no enviado:',e);
+  }
+}
+
+const EC={Pendiente:'b-pend','En proceso':'b-proc',Listo:'b-list',Entregado:'b-entr',Cancelado:'b-canc'};
+let ordenes=[],solicitudes=[],tecnicos=[],resenas=[],usuario=null,editingId=null,editingTecOtId=null,currentDetId=null;
+let unsubOT=null,unsubSol=null,unsubTec=null;
+
+// ===== AUTH =====
+onAuthStateChanged(auth,async u=>{
+  if(u){
+    try{
+      const snap=await getDoc(doc(db,'usuarios',u.uid));
+      if(snap.exists()){
+        usuario={uid:u.uid,email:u.email,...snap.data()};
+        mostrarApp();
+      } else {
+        toast('Tu cuenta no tiene rol asignado.','err');
+        await signOut(auth);
+      }
+    }catch(e){toast('Error al cargar perfil.','err');await signOut(auth);}
+  } else {
+    mostrarLogin();
+  }
+});
+
+function mostrarLogin(){
+  document.getElementById('login-screen').classList.add('show');
+  document.getElementById('app-wrapper').classList.remove('show');
+  ['login-email','login-pass'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('login-error').classList.remove('show');
+  setTimeout(()=>document.getElementById('login-email').focus(),150);
+  if(unsubOT)unsubOT(); if(unsubSol)unsubSol(); if(unsubTec)unsubTec();
+}
+
+function mostrarApp(){
+  document.getElementById('login-screen').classList.remove('show');
+  document.getElementById('app-wrapper').classList.add('show');
+  aplicarRol();
+  iniciarListeners();
+  document.getElementById('fecha-top').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+function aplicarRol(){
+  const esAdmin=usuario.rol==='admin';
+  document.querySelectorAll('.admin-only').forEach(el=>el.style.display=esAdmin?'':'none');
+  document.getElementById('user-nombre').textContent=usuario.nombre||usuario.email;
+  const badge=document.getElementById('user-rol-badge');
+  const av=document.getElementById('user-avatar');
+  if(esAdmin){
+    badge.textContent='Admin';badge.className='role-badge role-admin';
+    av.className='user-avatar avatar-admin';
+  } else {
+    badge.textContent='Técnico';badge.className='role-badge role-tecnico';
+    av.className='user-avatar avatar-tecnico';
+    document.getElementById('d-sub').textContent='Mis OT asignadas';
+  }
+  av.textContent=(usuario.nombre||usuario.email)[0].toUpperCase();
+}
+
+window.intentarLogin=async function(){
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  const errEl=document.getElementById('login-error');
+  const btn=document.getElementById('login-btn');
+  if(!email||!pass){errEl.textContent='Completá email y contraseña.';errEl.classList.add('show');return}
+  btn.textContent='Ingresando...';btn.disabled=true;errEl.classList.remove('show');
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch(e){
+    const m={'auth/invalid-credential':'Email o contraseña incorrectos.','auth/too-many-requests':'Demasiados intentos. Esperá unos minutos.'};
+    errEl.textContent=m[e.code]||'Error: '+e.message;errEl.classList.add('show');
+    btn.textContent='INGRESAR';btn.disabled=false;
+  }
+}
+
+window.cerrarSesion=async function(){
+  if(!confirm('¿Cerrar sesión?'))return;
+  usuario=null;await signOut(auth);
+}
+
+// ===== LISTENERS =====
+function iniciarListeners(){
+  if(unsubOT)unsubOT();if(unsubSol)unsubSol();if(unsubTec)unsubTec();
+
+  unsubTec=onSnapshot(collection(db,'usuarios'),snap=>{
+    tecnicos=snap.docs.map(d=>({_id:d.id,...d.data()})).filter(u=>u.rol==='tecnico');
+    popularSelectTecnicos();renderTecnicos();
+  });
+
+  unsubOT=onSnapshot(collection(db,'ordenes'),snap=>{
+    let todas=snap.docs.map(d=>({_id:d.id,...d.data()}));
+    ordenes=usuario.rol==='tecnico'?todas.filter(o=>o.tecnicoId===usuario.uid):todas;
+    ordenes.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+    const st=document.getElementById('fb-status');
+    st.textContent='🟢 Conectado';st.style.cssText='font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;background:rgba(34,197,94,0.12);color:#22c55e;';
+    renderOrdenes();renderDash();renderClientes();
+  },err=>{
+    const st=document.getElementById('fb-status');
+    st.textContent='🔴 Sin conexión';st.style.cssText='font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;background:var(--danger-dim);color:var(--danger);';
+    toast('Error al cargar OT: '+err.message,'err');
+  });
+
+  if(usuario.rol==='admin'){
+    unsubSol=onSnapshot(collection(db,'solicitudes'),snap=>{
+      solicitudes=snap.docs.map(d=>({_id:d.id,...d.data()}));
+      solicitudes.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+      updateBadge();renderSolicitudes();renderDash();
+    },err=>toast('Error solicitudes: '+err.message,'err'));
+
+    onSnapshot(collection(db,'resenas'),snap=>{
+      resenas=snap.docs.map(d=>({_id:d.id,...d.data()}));
+      resenas.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+      renderResenas();
+      const pend=resenas.filter(r=>r.estado==='pendiente').length;
+      const navR=document.querySelector('.nav-item[onclick*="resenas"]');
+      if(navR){
+        let badge=navR.querySelector('.badge-notif');
+        if(!badge){badge=document.createElement('span');badge.className='badge-notif';badge.style.marginLeft='auto';navR.appendChild(badge);}
+        badge.textContent=pend||'';badge.style.display=pend?'inline':'none';
+      }
+    });
+  }
+}
+
+// ===== NAV =====
+const TITLES={dashboard:'Dashboard',ordenes:'Órdenes de Trabajo',solicitudes:'Solicitudes Web',clientes:'Clientes',tecnicos:'Técnicos',resenas:'Reseñas',estadisticas:'Estadísticas'};
+window.showView=function(id,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('page-title').textContent=TITLES[id]||id;
+  if(id==='estadisticas')renderEstadisticas();
+  if(id==='resenas')renderResenas();
+}
+
+// ===== HELPERS =====
+function fmt(f){if(!f)return'-';const[y,m,d]=f.split('-');return`${d}/${m}/${y}`}
+function hoy(){return new Date().toISOString().slice(0,10)}
+function moneda(n){return n>0?'$'+Number(n).toLocaleString('es-AR'):'-'}
+function nomTec(id){if(!id)return'—';const t=tecnicos.find(x=>x._id===id);return t?t.nombre:'—'}
+function popularSelectTecnicos(){
+  const sel=document.getElementById('m-tecnico');const val=sel.value;
+  sel.innerHTML='<option value="">Sin asignar</option>'+tecnicos.map(t=>`<option value="${t._id}">${t.nombre}</option>`).join('');
+  sel.value=val;
+}
+function toast(msg,tipo='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast toast-${tipo} show`;
+  setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+// ===== DASHBOARD =====
+function renderDash(){
+  document.getElementById('d-total').textContent=ordenes.length;
+  document.getElementById('d-pend').textContent=ordenes.filter(o=>o.estado==='Pendiente').length;
+  document.getElementById('d-proc').textContent=ordenes.filter(o=>o.estado==='En proceso').length;
+  document.getElementById('d-list').textContent=ordenes.filter(o=>o.estado==='Listo'||o.estado==='Entregado').length;
+  document.getElementById('dash-ultimas').innerHTML=ordenes.slice(0,5).map(o=>`
+    <div style="padding:.75rem 1.25rem;border-bottom:1px solid var(--borde2);display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--turquesa);font-size:13px">${(o._id||'').slice(-6).toUpperCase()}</div>
+      <div style="font-size:12px;color:var(--gris2)">${o.cliente} · ${o.equipo}</div></div>
+      <span class="badge ${EC[o.estado]||'b-pend'}">${o.estado}</span>
+    </div>`).join('')||'<div style="padding:1.25rem;text-align:center;color:var(--gris2);font-size:13px">Sin órdenes aún</div>';
+  if(usuario.rol==='admin'){
+    const pend=solicitudes.filter(s=>s.estado==='Pendiente revisión');
+    document.getElementById('dash-solicitudes').innerHTML=pend.length
+      ?pend.slice(0,3).map(s=>`<div style="padding:.625rem 0;border-bottom:1px solid var(--borde2)"><div style="font-weight:500;color:var(--blanco);font-size:13px">${s.nombre} ${s.apellido}</div><div style="font-size:12px;color:var(--gris2)">${s.tipo||'—'} · ${fmt(s.fecha)}</div></div>`).join('')+'<div style="padding:.75rem 0"><button class="btn btn-t btn-sm" onclick="showView(\'solicitudes\',null)">Ver todas →</button></div>'
+      :'<div style="padding:1rem;text-align:center;color:var(--gris2);font-size:13px">Sin solicitudes pendientes</div>';
+  }
+}
+
+// ===== ORDENES =====
+window.renderOrdenes=function(){
+  if(!usuario)return;
+  const q=(document.getElementById('buscar-ot').value||'').toLowerCase();
+  const est=document.getElementById('filtro-est').value;
+  const lista=ordenes.filter(o=>(!q||(o.cliente+o.equipo+o.problema+(o._id||'')).toLowerCase().includes(q))&&(!est||o.estado===est));
+  const body=document.getElementById('ot-body');
+  const empty=document.getElementById('ot-empty');
+  if(!lista.length){body.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  const esAdmin=usuario.rol==='admin';
+  body.innerHTML=lista.map(o=>{
+    const id=o._id||'';
+    const btns=esAdmin
+      ?'<button class="btn btn-ghost btn-sm btn-icon" data-action="editar" data-id="'+id+'">✏️</button>'
+       +'<button class="btn btn-sm btn-icon" style="background:var(--danger-dim);color:var(--danger);border:1px solid rgba(239,68,68,0.2)" data-action="eliminar" data-id="'+id+'">✕</button>'
+      :'<button class="btn btn-ghost btn-sm btn-icon" data-action="actualizar" data-id="'+id+'">✏️</button>';
+    return '<tr>'
+      +'<td class="ot-num">'+id.slice(-6).toUpperCase()+'</td>'
+      +'<td>'+o.cliente+'</td>'
+      +'<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+o.equipo+'</td>'
+      +'<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gris2)">'+o.problema+'</td>'
+      +'<td style="white-space:nowrap">'+fmt(o.fecha)+'</td>'
+      +'<td style="white-space:nowrap;color:var(--info)">'+nomTec(o.tecnicoId)+'</td>'
+      +'<td><span class="badge '+(EC[o.estado]||'b-pend')+'">'+o.estado+'</span></td>'
+      +'<td style="white-space:nowrap">'+moneda(o.costo)+'</td>'
+      +'<td><div class="actions">'
+      +'<button class="btn btn-t btn-sm btn-icon" data-action="ver" data-id="'+id+'">👁</button>'
+      +btns+'</div></td></tr>';
+  }).join('');
+}
+
+// Event delegation — evita problemas con type="module" y onclick inline
+document.getElementById('ot-body').addEventListener('click',function(e){
+  const btn=e.target.closest('[data-action]');
+  if(!btn)return;
+  const action=btn.dataset.action;
+  const id=btn.dataset.id;
+  if(action==='ver')verOT(id);
+  else if(action==='editar')editarOT(id);
+  else if(action==='eliminar')eliminarOT(id);
+  else if(action==='actualizar')abrirActTecnico(id);
+});
+
+// ===== CÁLCULO DE COSTOS =====
+window.calcularTotal=function(){
+  const mano=parseFloat(document.getElementById('m-costo-mano').value)||0;
+  const partes=parseFloat(document.getElementById('m-costo-partes').value)||0;
+  const otros=parseFloat(document.getElementById('m-costo-otros').value)||0;
+  const total=mano+partes+otros;
+  document.getElementById('m-costo-total-interno').value=total||'';
+  calcularRentabilidad();
+}
+window.calcularRentabilidad=function(){
+  const interno=parseFloat(document.getElementById('m-costo-total-interno').value)||0;
+  const cliente=parseFloat(document.getElementById('m-costo').value)||0;
+  const rent=cliente-interno;
+  const el=document.getElementById('m-rentabilidad');
+  el.value=rent||'';
+  el.style.color=rent>0?'var(--success)':rent<0?'var(--danger)':'var(--gris2)';
+}
+
+window.abrirNuevaOrden=function(datos){
+  editingId=null;
+  document.getElementById('m-titulo').textContent='Nueva Orden de Trabajo';
+  ['cliente','tel','email','equipo','serie','problema','diag','notas'].forEach(k=>document.getElementById('m-'+k).value='');
+  ['m-costo','m-costo-mano','m-costo-partes','m-costo-otros','m-costo-total-interno','m-rentabilidad'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('m-estado').value='Pendiente';
+  document.getElementById('m-fecha').value=hoy();
+  document.getElementById('m-tecnico').value='';
+  if(datos){
+    document.getElementById('m-cliente').value=((datos.nombre||'')+' '+(datos.apellido||'')).trim();
+    document.getElementById('m-tel').value=datos.tel||'';
+    document.getElementById('m-email').value=datos.mail||'';
+    document.getElementById('m-equipo').value=datos.tipo||'';
+    document.getElementById('m-problema').value=datos.desc||'';
+    if(datos.marca||datos.modelo)document.getElementById('m-notas').value=('Marca/Modelo: '+[datos.marca,datos.modelo].filter(Boolean).join(' ')).trim();
+  }
+  abrirModal('modal-ot');
+}
+
+window.editarOT=function(fid){
+  const o=ordenes.find(x=>x._id===fid);if(!o)return;
+  editingId=fid;
+  document.getElementById('m-titulo').textContent='Editar OT '+fid.slice(-6).toUpperCase();
+  document.getElementById('m-cliente').value=o.cliente||'';document.getElementById('m-tel').value=o.tel||'';
+  document.getElementById('m-email').value=o.email||'';document.getElementById('m-equipo').value=o.equipo||'';
+  document.getElementById('m-serie').value=o.serie||'';document.getElementById('m-fecha').value=o.fecha||'';
+  document.getElementById('m-problema').value=o.problema||'';document.getElementById('m-diag').value=o.diag||'';
+  document.getElementById('m-costo').value=o.costo||'';document.getElementById('m-estado').value=o.estado||'Pendiente';
+  document.getElementById('m-notas').value=o.notas||'';document.getElementById('m-tecnico').value=o.tecnicoId||'';
+  // Costos internos
+  document.getElementById('m-costo-mano').value=o.costoMano||'';
+  document.getElementById('m-costo-partes').value=o.costoPartes||'';
+  document.getElementById('m-costo-otros').value=o.costoOtros||'';
+  document.getElementById('m-costo-total-interno').value=o.costoInterno||'';
+  document.getElementById('m-rentabilidad').value=o.rentabilidad||'';
+  cerrar('modal-det');abrirModal('modal-ot');
+}
+
+window.guardarOT=async function(){
+  const cliente=document.getElementById('m-cliente').value.trim();
+  const equipo=document.getElementById('m-equipo').value.trim();
+  const problema=document.getElementById('m-problema').value.trim();
+  if(!cliente||!equipo||!problema){toast('Completá Cliente, Equipo y Problema.','err');return}
+  const btn=document.querySelector('#modal-ot .btn-n');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    const tecnicoId=document.getElementById('m-tecnico').value;
+    const costoMano=parseFloat(document.getElementById('m-costo-mano').value)||0;
+    const costoPartes=parseFloat(document.getElementById('m-costo-partes').value)||0;
+    const costoOtros=parseFloat(document.getElementById('m-costo-otros').value)||0;
+    const costoInterno=costoMano+costoPartes+costoOtros;
+    const costo=parseFloat(document.getElementById('m-costo').value)||0;
+    const rentabilidad=costo-costoInterno;
+    const datos={cliente,equipo,problema,
+      tel:document.getElementById('m-tel').value.trim(),email:document.getElementById('m-email').value.trim(),
+      serie:document.getElementById('m-serie').value.trim(),fecha:document.getElementById('m-fecha').value,
+      diag:document.getElementById('m-diag').value.trim(),
+      costo,costoMano,costoPartes,costoOtros,costoInterno,rentabilidad,
+      estado:document.getElementById('m-estado').value,notas:document.getElementById('m-notas').value.trim(),
+      tecnicoId,tecnicoNombre:nomTec(tecnicoId)
+    };
+    if(editingId){
+      const otAnterior=ordenes.find(o=>o._id===editingId);
+      const estadoAnterior=otAnterior?otAnterior.estado:null;
+      await updateDoc(doc(db,'ordenes',editingId),{...datos,actualizadoEn:serverTimestamp()});
+
+      // Si hay presupuesto listo para aprobar, mandar ese email en lugar del de cambio de estado
+      const esPresupuesto=datos.estado==='Pendiente'&&datos.costo>0&&datos.email&&datos.diag;
+      if(esPresupuesto){
+        const otId=editingId.slice(-6).toUpperCase();
+        const baseUrl='https://abacosdigitales.github.io/site.github.io/cliente.html';
+        const linkAprobar=baseUrl+'?ot='+otId+'&accion=aprobar';
+        const linkRechazar=baseUrl+'?ot='+otId+'&accion=rechazar';
+        try{
+          await emailjs.send('service_928zkc2','template_1av53iv',{
+            cliente_nombre:datos.cliente,
+            cliente_email:datos.email,
+            equipo:datos.equipo,
+            estado:'Presupuesto listo para aprobacion',
+            diagnostico:datos.diag,
+            costo:'$'+Number(datos.costo).toLocaleString('es-AR'),
+            link_aprobar:linkAprobar,
+            link_rechazar:linkRechazar,
+          });
+          toast('Email de presupuesto enviado al cliente');
+        }catch(emailErr){console.warn('Email presupuesto no enviado:',emailErr);}
+      } else {
+        // Solo mandar notificación de cambio de estado en otros casos
+        await enviarNotificacion(datos, estadoAnterior);
+      }
+    } else {
+      await addDoc(collection(db,'ordenes'),{...datos,creadoEn:serverTimestamp()});
+    }
+    cerrar('modal-ot');toast(editingId?'OT actualizada':'OT creada correctamente');
+  }catch(e){toast('Error: '+e.message,'err');}
+  btn.textContent='Guardar';btn.disabled=false;
+}
+
+window.verOT=function(fid){
+  const o=ordenes.find(x=>x._id===fid);if(!o)return;
+  currentDetId=fid;
+  document.getElementById('det-titulo').textContent='OT '+fid.slice(-6).toUpperCase();
+  const esAdmin=usuario.rol==='admin';
+  let rows=[
+    ['Cliente',o.cliente],['Teléfono',o.tel||'-'],['Email',o.email||'-'],
+    ['Equipo',o.equipo],['N° Serie',o.serie||'-'],['Ingreso',fmt(o.fecha)],
+    ['Técnico',nomTec(o.tecnicoId)],['Problema',o.problema],
+    ['Diagnóstico',o.diag||'—'],
+    ['Estado','<span class="badge '+(EC[o.estado]||'b-pend')+'">'+o.estado+'</span>'],
+    ['Precio al cliente',moneda(o.costo)],
+    ['Notas',o.notas||'-']
+  ];
+  if(esAdmin&&(o.costoInterno||o.costoMano||o.costoPartes||o.costoOtros)){
+    rows=rows.concat([
+      ['— Mano de obra',moneda(o.costoMano)],
+      ['— Repuestos / Partes',moneda(o.costoPartes)],
+      ['— Viáticos / Otros',moneda(o.costoOtros)],
+      ['Costo interno total',moneda(o.costoInterno)],
+      ['Rentabilidad','<span style="color:'+(o.rentabilidad>0?'var(--success)':o.rentabilidad<0?'var(--danger)':'var(--gris2)')+'">'+moneda(o.rentabilidad)+'</span>'],
+    ]);
+  }
+  if(!esAdmin&&o.costoMano){
+    rows=rows.concat([['Tu mano de obra',moneda(o.costoMano)]]);
+  }
+  document.getElementById('det-body').innerHTML=rows.map(([k,v])=>'<div class="det-row"><span class="det-k">'+k+'</span><span class="det-v">'+v+'</span></div>').join('');
+  const eb=document.getElementById('det-edit-btn');
+  const pb=document.getElementById('det-print-btn');
+  if(esAdmin){eb.style.display='';eb.onclick=function(){editarOT(fid);};}else{eb.style.display='none';}
+  pb.onclick=function(){imprimirOT();};
+  abrirModal('modal-det');
+}
+
+window.imprimirOT=function(){
+  const ot=ordenes.find(x=>x._id===currentDetId);
+  if(!ot){alert('No se pudo obtener los datos de la OT.');return}
+
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const PW=210,PH=297,ml=14,mr=14,cw=PW-ml-mr;
+  let y=14;
+
+  // Paleta
+  const C={
+    turquesa:[0,212,200],naranja:[255,107,26],
+    gris:[140,140,140],negro:[20,20,20],
+    fondoGris:[249,250,251],bordeGris:[220,220,220],
+    fondoProb:[255,247,237],bordProb:[254,215,170],
+    fondoDiag:[240,253,250],bordDiag:[153,246,228],
+    fondoGar:[240,253,250],bordGar:[153,246,228],
+    verde:[6,95,70]
+  };
+
+  // Helper: texto multilínea con altura calculada
+  function textBox(label,text,x,yp,w,bgRGB,brRGB){
+    // Setear font ANTES de calcular splitTextToSize para que mida correctamente
+    doc.setFont('helvetica','normal');doc.setFontSize(9.5);
+    const maxW=w-7;
+    const lines=doc.splitTextToSize(text||'—',maxW);
+    const lineH=5.2;
+    const h=Math.max(14,6+lines.length*lineH+4);
+    doc.setFillColor(...bgRGB);doc.setDrawColor(...brRGB);doc.setLineWidth(0.25);
+    doc.roundedRect(x,yp,w,h,1,1,'FD');
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.gris);
+    doc.text(label.toUpperCase(),x+3,yp+4.5);
+    doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(...C.negro);
+    doc.text(lines,x+3.5,yp+10);
+    return yp+h+3;
+  }
+
+  function fieldBox(label,val,x,yp,w){
+    doc.setFont('helvetica','normal');doc.setFontSize(9.5);
+    const lines=doc.splitTextToSize(val||'—',w-7);
+    const h=Math.max(13,6+lines.length*5.2+4);
+    doc.setFillColor(...C.fondoGris);doc.setDrawColor(...C.bordeGris);doc.setLineWidth(0.25);
+    doc.roundedRect(x,yp,w,h,1,1,'FD');
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.gris);
+    doc.text(label.toUpperCase(),x+3,yp+4.5);
+    doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(...C.negro);
+    doc.text(lines,x+3.5,yp+10);
+    return yp+h+3;
+  }
+
+  function sectionTitle(txt,yp){
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...C.turquesa);
+    doc.text(txt.toUpperCase(),ml,yp);
+    doc.setDrawColor(...C.bordeGris);doc.setLineWidth(0.25);
+    doc.line(ml,yp+1.5,PW-mr,yp+1.5);
+    return yp+6;
+  }
+
+  function fmtF(f){if(!f)return'—';const[yr,m,d]=f.split('-');return d+'/'+m+'/'+yr}
+
+  // ── HEADER ──
+  doc.setFont('helvetica','bold');doc.setFontSize(20);
+  doc.setTextColor(...C.turquesa);doc.text('TECH',ml,y);
+  const tw=doc.getTextWidth('TECH');
+  doc.setTextColor(...C.naranja);doc.text('FIX',ml+tw,y);
+  const fw=doc.getTextWidth('FIX');
+  doc.setFont('helvetica','normal');doc.setFontSize(13);doc.setTextColor(180,180,180);
+  doc.text(' PRO',ml+tw+fw,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...C.gris);
+  doc.text('REPARACION DE EQUIPOS INFORMATICOS',ml,y+5);
+
+  const otNum=(ot._id||'').slice(-6).toUpperCase();
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...C.turquesa);
+  const otW=doc.getTextWidth('OT-'+otNum);
+  doc.text('OT-'+otNum,PW-mr-otW,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...C.gris);
+  const fechaStr='Emitida: '+new Date().toLocaleDateString('es-AR');
+  doc.text(fechaStr,PW-mr-doc.getTextWidth(fechaStr),y+5);
+
+  doc.setDrawColor(...C.turquesa);doc.setLineWidth(0.8);doc.line(ml,y+8,PW-mr,y+8);
+  y+=14;
+
+  // ── ESTADO BADGE ──
+  const estadoColors={
+    Pendiente:{bg:[254,243,199],txt:[146,64,14]},
+    'En proceso':{bg:[219,234,254],txt:[30,64,175]},
+    Listo:{bg:[209,250,229],txt:[6,95,70]},
+    Entregado:{bg:[209,250,229],txt:[6,95,70]},
+    Cancelado:{bg:[243,244,246],txt:[107,114,128]}
+  };
+  const ec=estadoColors[ot.estado]||estadoColors['Pendiente'];
+  const estTxt=ot.estado||'—';
+  doc.setFont('helvetica','bold');doc.setFontSize(9);
+  const estW=doc.getTextWidth(estTxt)+12;
+  doc.setFillColor(...ec.bg);doc.setDrawColor(...ec.txt);doc.setLineWidth(0.4);
+  doc.roundedRect(ml,y,estW,8,4,4,'FD');
+  doc.setTextColor(...ec.txt);doc.text(estTxt,ml+6,y+5.5);
+  y+=13;
+
+  // ── CLIENTE ──
+  y=sectionTitle('Datos del cliente',y);
+  const hw=(cw-3)/2;
+  y=Math.max(
+    fieldBox('Nombre',ot.cliente,ml,y,hw),
+    fieldBox('Telefono',ot.tel,ml+hw+3,y-((Math.max(fieldBox('Nombre',ot.cliente,ml,y,hw),y)-y)),hw)
+  );
+  // Recalculate side by side
+  const yBefore=y-((fieldBox('Nombre',ot.cliente,ml,y,hw))-y);
+  const yN=fieldBox('Nombre',ot.cliente,ml,yBefore,hw);
+  const yT=fieldBox('Telefono',ot.tel,ml+hw+3,yBefore,hw);
+  y=Math.max(yN,yT);
+  y=fieldBox('Email',ot.email,ml,y,cw);
+
+  // ── EQUIPO ──
+  y=sectionTitle('Datos del equipo',y);
+  y=fieldBox('Equipo',ot.equipo,ml,y,cw);
+  const yS=fieldBox('N serie',ot.serie,ml,y,hw);
+  const yF=fieldBox('Fecha ingreso',fmtF(ot.fecha),ml+hw+3,y,hw);
+  y=Math.max(yS,yF);
+
+  // ── SERVICIO ──
+  y=sectionTitle('Detalle del servicio',y);
+  y=textBox('Problema reportado',ot.problema,ml,y,cw,C.fondoProb,C.bordProb);
+  if(ot.diag)y=textBox('Diagnostico / trabajo realizado',ot.diag,ml,y,cw,C.fondoDiag,C.bordDiag);
+  if(ot.notas)y=textBox('Notas',ot.notas,ml,y,cw,C.fondoGris,C.bordeGris);
+
+  // ── TÉCNICO ──
+  const tecNombre=nomTec(ot.tecnicoId);
+  if(tecNombre!=='—'){
+    y=sectionTitle('Tecnico asignado',y);
+    y=fieldBox('Tecnico',tecNombre,ml,y,hw);
+  }
+
+  // ── FOOTER (pegado al contenido, min y=230) ──
+  y=Math.max(y+6,200);
+  doc.setDrawColor(...C.bordeGris);doc.setLineWidth(0.3);doc.line(ml,y,PW-mr,y);
+  y+=5;
+
+  // Garantia (izquierda, 85mm)
+  doc.setFillColor(...C.fondoGar);doc.setDrawColor(...C.bordGar);doc.setLineWidth(0.25);
+  doc.roundedRect(ml,y,85,14,1,1,'FD');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...C.verde);
+  doc.text('Garantia de 90 dias sobre la reparacion.',ml+3,y+5.5);
+  doc.setFont('helvetica','normal');
+  doc.text('Presentar comprobante al momento del retiro.',ml+3,y+10.5);
+
+  // Costo (centro)
+  if(ot.costo>0){
+    const cx=ml+93;
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...C.gris);
+    doc.text('TOTAL A ABONAR',cx,y+4);
+    doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(...C.naranja);
+    doc.text('$'+Number(ot.costo).toLocaleString('es-AR'),cx,y+13);
+  }
+
+  // Firma (derecha)
+  const fx=PW-mr-38;
+  doc.setDrawColor(120,120,120);doc.setLineWidth(0.3);doc.line(fx,y+14,PW-mr,y+14);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.gris);
+  const fl='Firma del cliente';
+  doc.text(fl,fx+(38-doc.getTextWidth(fl))/2,y+18.5);
+
+  // ══ PÁGINA 2: TÉRMINOS Y CONDICIONES ══
+  doc.addPage();
+  y=16;
+
+  // Logo centrado
+  doc.setFont('helvetica','bold');doc.setFontSize(15);
+  const logoW=doc.getTextWidth('TECHFIX PRO');
+  const lx=(PW-logoW)/2;
+  doc.setTextColor(...C.turquesa);doc.text('TECH',lx,y);
+  const lt=doc.getTextWidth('TECH');
+  doc.setTextColor(...C.naranja);doc.text('FIX',lx+lt,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(13);
+  doc.setTextColor(80,80,80);doc.text(' PRO',lx+lt+doc.getTextWidth('FIX'),y);
+
+  y+=7;
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...C.negro);
+  const tcT='Terminos y Condiciones del Servicio';
+  doc.text(tcT,(PW-doc.getTextWidth(tcT))/2,y);
+
+  y+=5;
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...C.gris);
+  const tcS='Version vigente 2026 — Lea detenidamente antes de dejar su equipo.';
+  doc.text(tcS,(PW-doc.getTextWidth(tcS))/2,y);
+
+  y+=3;
+  doc.setDrawColor(...C.turquesa);doc.setLineWidth(0.7);doc.line(ml,y,PW-mr,y);
+  y+=6;
+
+  const arts=[
+    ['Art. 1 — Ingreso del equipo',[
+      'Al dejar el equipo, el cliente recibe una Orden de Trabajo como comprobante obligatorio para el retiro.',
+      'El cliente debe declarar el estado previo visible del equipo. El taller no se responsabiliza por danos esteticos preexistentes.',
+      'El cliente debe hacer copia de seguridad de sus datos antes de entregar el equipo.',
+    ]],
+    ['Art. 2 — Diagnostico y presupuesto',[
+      'El diagnostico basico es sin cargo.',
+      'El presupuesto se comunica al cliente antes de iniciar cualquier reparacion.',
+      'El cliente tiene 48 horas habiles para aprobar o rechazar el presupuesto.',
+      'Si rechaza el presupuesto, debera abonar un costo de diagnostico antes de retirar el equipo.',
+    ]],
+    ['Art. 3 — Reparacion y repuestos',[
+      'Todos los repuestos utilizados son nuevos o reacondicionados, informando al cliente en cada caso.',
+      'En algunos equipos, la apertura puede implicar la perdida de la garantia de fabrica. El cliente sera informado previamente.',
+    ]],
+    ['Art. 4 — Garantia',[
+      'Todos los trabajos tienen una garantia de 90 dias corridos desde la fecha de entrega, sobre la falla especificamente reparada.',
+      'La garantia cubre defectos de mano de obra y falla del repuesto instalado. No cubre danos por mal uso, golpes o liquidos.',
+      'Para hacer efectiva la garantia, el cliente debera presentar la Orden de Trabajo original.',
+    ]],
+    ['Art. 5 — Plazos de entrega',[
+      'Los plazos informados son estimativos y pueden variar por disponibilidad de repuestos.',
+      'El servicio urgente tiene disponibilidad limitada y puede implicar un recargo adicional.',
+    ]],
+    ['Art. 6 — Retiro del equipo',[
+      'El equipo debe retirarse dentro de los 30 dias corridos desde la notificacion. Pasado ese plazo se aplicara cargo de almacenamiento.',
+      'El retiro se realiza exclusivamente con la presentacion de la Orden de Trabajo.',
+    ]],
+    ['Art. 7 — Pagos',[
+      'El pago se realiza al momento del retiro del equipo.',
+      'Se aceptan efectivo, transferencia bancaria y tarjeta de debito/credito.',
+      'No se entregara el equipo sin cancelacion total del servicio.',
+    ]],
+    ['Art. 8 — Responsabilidades',[
+      'El taller no se responsabiliza por perdida de datos durante los trabajos, salvo acuerdo expreso de respaldo previo.',
+      'La responsabilidad maxima del taller no superara el monto abonado por el servicio.',
+    ]],
+  ];
+
+  arts.forEach(([titulo,items])=>{
+    if(y>270){doc.addPage();y=16;}
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...C.naranja);
+    doc.text(titulo.toUpperCase(),ml,y);
+    doc.setDrawColor(254,215,170);doc.setLineWidth(0.2);doc.line(ml,y+1.5,PW-mr,y+1.5);
+    y+=5.5;
+    items.forEach(item=>{
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.negro);
+      const lines=doc.splitTextToSize('- '+item,cw-3);
+      if(y+lines.length*4.5>278){doc.addPage();y=16;}
+      doc.text(lines,ml+2,y);
+      y+=lines.length*4.5+1.5;
+    });
+    y+=3;
+  });
+
+  // Nota final
+  if(y>270){doc.addPage();y=16;}
+  y+=2;
+  doc.setFillColor(255,247,237);doc.setDrawColor(254,215,170);doc.setLineWidth(0.25);
+  const noteText='Al dejar su equipo o firmar esta orden, el cliente declara haber leido, comprendido y aceptado todas las condiciones aqui establecidas.';
+  const noteLines=doc.splitTextToSize(noteText,cw-8);
+  const noteH=noteLines.length*5+8;
+  doc.roundedRect(ml,y,cw,noteH,1,1,'FD');
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(146,64,14);
+  doc.text(noteLines,ml+4,y+6);
+
+  doc.save('OT-'+otNum+'.pdf');
+}
+
+window.eliminarOT=async function(fid){
+  if(!confirm('¿Eliminar esta orden? No se puede deshacer.'))return;
+  await deleteDoc(doc(db,'ordenes',fid));toast('OT eliminada');
+}
+
+window.exportarCSV=function(){
+  const h=['N° OT','Cliente','Teléfono','Email','Equipo','Serie','Fecha','Técnico','Problema','Diagnóstico','Estado','Costo','Notas'];
+  const rows=ordenes.map(o=>[(o._id||'').slice(-6).toUpperCase(),o.cliente,o.tel||'',o.email||'',o.equipo,o.serie||'',fmt(o.fecha),nomTec(o.tecnicoId),o.problema,o.diag||'',o.estado,o.costo||0,o.notas||'']);
+  const csv=[h,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='ordenes_techfix.csv';a.click();
+}
+
+// ===== TÉCNICO: ACTUALIZAR OT =====
+window.abrirActTecnico=function(fid){
+  const o=ordenes.find(x=>x._id===fid);if(!o)return;
+  editingTecOtId=fid;
+  document.getElementById('tec-ot-titulo').textContent='Actualizar OT '+fid.slice(-6).toUpperCase();
+  document.getElementById('tec-estado').value=o.estado||'Pendiente';
+  document.getElementById('tec-diag').value=o.diag||'';
+  document.getElementById('tec-notas').value=o.notas||'';
+  abrirModal('modal-tec-ot');
+}
+
+window.guardarActualizacionTecnico=async function(){
+  if(!editingTecOtId)return;
+  const btn=document.querySelector('#modal-tec-ot .btn-n');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    const otAnterior=ordenes.find(o=>o._id===editingTecOtId);
+    const estadoAnterior=otAnterior?otAnterior.estado:null;
+    const nuevoEstado=document.getElementById('tec-estado').value;
+    const nuevoDiag=document.getElementById('tec-diag').value.trim();
+    await updateDoc(doc(db,'ordenes',editingTecOtId),{
+      estado:nuevoEstado,
+      diag:nuevoDiag,
+      notas:document.getElementById('tec-notas').value.trim(),
+      actualizadoEn:serverTimestamp()
+    });
+    if(otAnterior){
+      await enviarNotificacion({
+        cliente:otAnterior.cliente,
+        email:otAnterior.email,
+        equipo:otAnterior.equipo,
+        estado:nuevoEstado,
+        diag:nuevoDiag
+      }, estadoAnterior);
+    }
+    cerrar('modal-tec-ot');toast('OT actualizada correctamente');
+  }catch(e){toast('Error: '+e.message,'err');}
+  btn.textContent='Guardar';btn.disabled=false;
+}
+
+// ===== SOLICITUDES =====
+function renderSolicitudes(){
+  updateBadge();
+  const c=document.getElementById('sol-lista');
+  if(!solicitudes.length){c.innerHTML='<div class="empty-state"><div class="es-icon">📩</div><p>No hay solicitudes todavía.</p></div>';return}
+  c.innerHTML=solicitudes.map(s=>`
+    <div class="sol-card">
+      <div style="flex-shrink:0;width:40px;height:40px;background:var(--naranja-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--naranja);font-size:16px">${(s.nombre||'?')[0]}</div>
+      <div class="sol-info">
+        <div class="sol-title">${s.nombre} ${s.apellido} — <span style="color:var(--turquesa)">${s.tipo||'Sin tipo'}</span></div>
+        <div class="sol-meta">📞 ${s.tel||'-'} · 📧 ${s.mail||'-'} · ${fmt(s.fecha)} · <span style="color:var(--gris1)">${(s._id||'').slice(-6).toUpperCase()}</span></div>
+        <div style="margin-top:.4rem;font-size:12px;color:var(--gris2);line-height:1.5">${s.desc||''}</div>
+        ${s.marca||s.modelo?`<div style="margin-top:.3rem;font-size:12px;color:var(--gris3)">${[s.marca,s.modelo].filter(Boolean).join(' ')}</div>`:''}
+        <div style="margin-top:.5rem"><span class="badge ${s.estado==='Pendiente revisión'?'b-sol':'b-entr'}">${s.estado}</span>${s.urgencia==='urgente'?' <span class="badge b-pend">Urgente</span>':''}</div>
+      </div>
+      <div class="sol-actions">
+        <button class="btn btn-t btn-sm" onclick="convertirSol('${s._id}')">Crear OT</button>
+        <button class="btn btn-ghost btn-sm" onclick="marcarProcesada('${s._id}')">✓ Ok</button>
+      </div>
+    </div>`).join('');
+}
+
+window.convertirSol=async function(fid){
+  const s=solicitudes.find(x=>x._id===fid);if(!s)return;
+  await updateDoc(doc(db,'solicitudes',fid),{estado:'Procesada'});
+  showView('ordenes',document.querySelectorAll('.nav-item')[1]);
+  abrirNuevaOrden(s);
+}
+window.marcarProcesada=async function(fid){
+  await updateDoc(doc(db,'solicitudes',fid),{estado:'Procesada'});
+  toast('Solicitud marcada como procesada');
+}
+window.limpiarSolicitudes=async function(){
+  const proc=solicitudes.filter(s=>s.estado==='Procesada');
+  if(!proc.length){toast('No hay solicitudes procesadas.','err');return}
+  if(!confirm(`¿Eliminar ${proc.length} solicitud(es) procesada(s)?`))return;
+  await Promise.all(proc.map(s=>deleteDoc(doc(db,'solicitudes',s._id))));
+  toast('Solicitudes eliminadas');
+}
+function updateBadge(){
+  const n=solicitudes.filter(s=>s.estado==='Pendiente revisión').length;
+  const b=document.getElementById('sol-badge');
+  b.textContent=n||'';b.style.display=n?'inline':'none';
+}
+
+// ===== CLIENTES =====
+function renderClientes(){
+  const mapa={};
+  ordenes.forEach(o=>{
+    const k=(o.cliente||'').trim().toLowerCase();
+    if(!mapa[k])mapa[k]={nombre:o.cliente,tel:o.tel||'-',email:o.email||'-',count:0,ultima:o.fecha};
+    mapa[k].count++;
+    if((o.fecha||'')>(mapa[k].ultima||''))mapa[k].ultima=o.fecha;
+  });
+  const lista=Object.values(mapa).sort((a,b)=>b.count-a.count);
+  const body=document.getElementById('cli-body');
+  const empty=document.getElementById('cli-empty');
+  if(!lista.length){body.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  body.innerHTML=lista.map(c=>`<tr>
+    <td style="font-weight:500;color:var(--blanco)">${c.nombre}</td>
+    <td>${c.tel}</td><td style="color:var(--gris2)">${c.email}</td>
+    <td><span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--turquesa)">${c.count}</span></td>
+    <td>${fmt(c.ultima)}</td>
+  </tr>`).join('');
+}
+
+// ===== TÉCNICOS =====
+window.abrirModalTecnico=function(){
+  ['t-nombre','t-email','t-pass'].forEach(id=>document.getElementById(id).value='');
+  abrirModal('modal-tecnico');
+}
+
+window.crearTecnico=async function(){
+  const nombre=document.getElementById('t-nombre').value.trim();
+  const email=document.getElementById('t-email').value.trim();
+  const pass=document.getElementById('t-pass').value;
+  if(!nombre||!email||!pass){toast('Completá todos los campos.','err');return}
+  if(pass.length<6){toast('La contraseña debe tener al menos 6 caracteres.','err');return}
+  const btn=document.querySelector('#modal-tecnico .btn-n');
+  btn.textContent='Creando...';btn.disabled=true;
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    await setDoc(doc(db,'usuarios',cred.user.uid),{nombre,email,rol:'tecnico',creadoEn:serverTimestamp()});
+    cerrar('modal-tecnico');
+    toast(`Técnico "${nombre}" creado exitosamente.`);
+  }catch(e){
+    const m={'auth/email-already-in-use':'Ese email ya está registrado.','auth/invalid-email':'Email inválido.'};
+    toast(m[e.code]||'Error: '+e.message,'err');
+  }
+  btn.textContent='Crear cuenta';btn.disabled=false;
+}
+
+function renderTecnicos(){
+  const c=document.getElementById('tecnicos-lista');if(!c)return;
+  if(!tecnicos.length){c.innerHTML='<div class="empty-state"><div class="es-icon">🔧</div><p>No hay técnicos. Agregá el primero.</p></div>';return}
+  c.innerHTML=tecnicos.map(t=>`
+    <div class="tecnico-card">
+      <div class="tecnico-avatar">${(t.nombre||'T')[0].toUpperCase()}</div>
+      <div class="tecnico-info">
+        <div class="tecnico-nombre">${t.nombre}</div>
+        <div class="tecnico-email">${t.email}</div>
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <span class="badge b-proc">Técnico</span>
+        <button class="btn btn-danger btn-sm" onclick="eliminarTecnico('${t._id}','${t.nombre}')">Eliminar</button>
+      </div>
+    </div>`).join('');
+}
+
+window.eliminarTecnico=async function(uid,nombre){
+  if(!confirm(`¿Eliminar al técnico ${nombre}? Perderá acceso al panel.`))return;
+  await deleteDoc(doc(db,'usuarios',uid));
+  toast(`Técnico ${nombre} eliminado`);
+}
+
+// ===== RESEÑAS =====
+function renderResenas(){
+  const filtro=document.getElementById('filtro-resena')?.value||'';
+  const lista=filtro?resenas.filter(r=>r.estado===filtro):resenas;
+  const c=document.getElementById('resenas-admin-lista');
+  if(!c)return;
+  if(!lista.length){
+    c.innerHTML='<div class="empty-state"><div class="es-icon">⭐</div><p>No hay reseñas'+(filtro?' en este estado':'')+'.</p></div>';
+    return;
+  }
+  const ESTADO_BADGE={pendiente:'b-sol',aprobada:'b-entr',rechazada:'b-canc'};
+  c.innerHTML=lista.map(r=>`
+    <div class="sol-card" style="margin-bottom:.75rem">
+      <div style="flex-shrink:0;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--turquesa3),var(--turquesa));display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--blanco)">${(r.nombre||'?')[0].toUpperCase()}</div>
+      <div class="sol-info">
+        <div class="sol-title">${r.nombre||'—'} <span style="color:var(--naranja)">${'★'.repeat(r.estrellas||5)}</span></div>
+        <div class="sol-meta">${r.equipo||'Sin equipo'} · ${r.fecha||'—'}</div>
+        <div style="margin-top:.5rem;font-size:13px;color:var(--gris1);line-height:1.5;font-style:italic">"${r.texto||''}"</div>
+        <div style="margin-top:.5rem"><span class="badge ${ESTADO_BADGE[r.estado]||'b-pend'}">${r.estado}</span></div>
+      </div>
+      <div class="sol-actions" style="flex-direction:column;gap:.5rem">
+        ${r.estado!=='aprobada'?`<button class="btn btn-t btn-sm" onclick="aprobarResena('${r._id}')">✓ Aprobar</button>`:''}
+        ${r.estado!=='rechazada'?`<button class="btn btn-danger btn-sm" onclick="rechazarResena('${r._id}')">✕ Rechazar</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="eliminarResena('${r._id}')">Eliminar</button>
+      </div>
+    </div>`).join('');
+}
+window.renderResenas=renderResenas;
+
+window.aprobarResena=async function(fid){
+  await updateDoc(doc(db,'resenas',fid),{estado:'aprobada'});
+  toast('Reseña aprobada y publicada en el sitio');
+}
+window.rechazarResena=async function(fid){
+  await updateDoc(doc(db,'resenas',fid),{estado:'rechazada'});
+  toast('Reseña rechazada');
+}
+window.eliminarResena=async function(fid){
+  if(!confirm('¿Eliminar esta reseña permanentemente?'))return;
+  await deleteDoc(doc(db,'resenas',fid));
+  toast('Reseña eliminada');
+}
+
+// ===== ESTADÍSTICAS =====
+let chartOtMes=null, chartEstados=null, chartIngresos=null;
+
+window.renderEstadisticas=function(){
+  if(!usuario||usuario.rol!=='admin')return;
+  const meses=parseInt(document.getElementById('est-periodo').value)||6;
+  const ahora=new Date();
+  const desde=meses===0?new Date('2000-01-01'):new Date(ahora.getFullYear(),ahora.getMonth()-meses+1,1);
+
+  const filtradas=meses===0?ordenes:ordenes.filter(o=>{
+    if(!o.fecha)return false;
+    return new Date(o.fecha)>=desde;
+  });
+
+  // KPIs
+  const totalOT=filtradas.length;
+  const entregadas=filtradas.filter(o=>o.estado==='Entregado').length;
+  const ingresoTotal=filtradas.reduce((s,o)=>s+(parseFloat(o.costo)||0),0);
+  const costoTotal=filtradas.reduce((s,o)=>s+(parseFloat(o.costoInterno)||0),0);
+  const rentabilidadTotal=ingresoTotal-costoTotal;
+  const enProceso=filtradas.filter(o=>o.estado==='En proceso'||o.estado==='Pendiente').length;
+
+  document.getElementById('est-kpis').innerHTML=`
+    <div class="stat-card c-t"><div class="stat-label">OT en período</div><div class="stat-val">${totalOT}</div><div class="stat-sub">${meses===0?'Todo el historial':'Últimos '+meses+' meses'}</div></div>
+    <div class="stat-card c-g"><div class="stat-label">Entregadas</div><div class="stat-val">${entregadas}</div><div class="stat-sub">${totalOT?Math.round(entregadas/totalOT*100):0}% del total</div></div>
+    <div class="stat-card c-n"><div class="stat-label">Ingresos brutos</div><div class="stat-val" style="font-size:22px">$${ingresoTotal.toLocaleString('es-AR')}</div><div class="stat-sub">Precio cobrado al cliente</div></div>
+    <div class="stat-card" style="border-left:3px solid ${rentabilidadTotal>=0?'var(--success)':'var(--danger)'}"><div class="stat-label">Rentabilidad neta</div><div class="stat-val" style="font-size:22px;color:${rentabilidadTotal>=0?'var(--success)':'var(--danger)'}">$${rentabilidadTotal.toLocaleString('es-AR')}</div><div class="stat-sub">Ingresos menos costos internos</div></div>
+  `;
+
+  // Preparar meses para gráficos
+  const mesesLabels=[];
+  const mesesData={};
+  const mesesIngresos={};
+  const numMeses=meses===0?12:meses;
+  for(let i=numMeses-1;i>=0;i--){
+    const d=new Date(ahora.getFullYear(),ahora.getMonth()-i,1);
+    const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const label=d.toLocaleDateString('es-AR',{month:'short',year:'2-digit'});
+    mesesLabels.push(label);
+    mesesData[key]=0;
+    mesesIngresos[key]=0;
+  }
+
+  filtradas.forEach(o=>{
+    if(!o.fecha)return;
+    const key=o.fecha.slice(0,7);
+    if(mesesData[key]!==undefined){mesesData[key]++;mesesIngresos[key]+=(parseFloat(o.costo)||0);}
+  });
+
+  const chartDefaults={
+    plugins:{legend:{labels:{color:'#888',font:{family:'Inter',size:11}}}},
+    scales:{x:{ticks:{color:'#666',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#666',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}
+  };
+
+  // Chart OT por mes
+  if(chartOtMes)chartOtMes.destroy();
+  chartOtMes=new Chart(document.getElementById('chart-ot-mes'),{
+    type:'bar',
+    data:{
+      labels:mesesLabels,
+      datasets:[{label:'OT',data:Object.values(mesesData),backgroundColor:'rgba(0,212,200,0.7)',borderColor:'#00d4c8',borderWidth:1,borderRadius:4}]
+    },
+    options:{...chartDefaults,plugins:{legend:{display:false}}}
+  });
+
+  // Chart estados (dona)
+  const estadosCounts={Pendiente:0,'En proceso':0,Listo:0,Entregado:0,Cancelado:0};
+  filtradas.forEach(o=>{if(estadosCounts[o.estado]!==undefined)estadosCounts[o.estado]++;});
+  if(chartEstados)chartEstados.destroy();
+  chartEstados=new Chart(document.getElementById('chart-estados'),{
+    type:'doughnut',
+    data:{
+      labels:Object.keys(estadosCounts),
+      datasets:[{data:Object.values(estadosCounts),backgroundColor:['rgba(245,158,11,.7)','rgba(96,165,250,.7)','rgba(0,212,200,.7)','rgba(34,197,94,.7)','rgba(100,100,100,.5)'],borderColor:'#1a1a1a',borderWidth:2}]
+    },
+    options:{plugins:{legend:{position:'right',labels:{color:'#888',font:{family:'Inter',size:11},boxWidth:12,padding:10}}},cutout:'65%'}
+  });
+
+  // Chart ingresos
+  if(chartIngresos)chartIngresos.destroy();
+  chartIngresos=new Chart(document.getElementById('chart-ingresos'),{
+    type:'line',
+    data:{
+      labels:mesesLabels,
+      datasets:[{label:'Ingresos $',data:Object.values(mesesIngresos),borderColor:'#ff6b1a',backgroundColor:'rgba(255,107,26,0.1)',fill:true,tension:.4,pointBackgroundColor:'#ff6b1a',pointRadius:4}]
+    },
+    options:{...chartDefaults,plugins:{legend:{display:false}},scales:{...chartDefaults.scales,y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>'$'+Number(v).toLocaleString('es-AR')}}}}
+  });
+
+  // Ranking técnicos
+  const rankMap={};
+  filtradas.forEach(o=>{
+    if(!o.tecnicoId)return;
+    const nom=o.tecnicoNombre||nomTec(o.tecnicoId)||o.tecnicoId;
+    if(!rankMap[nom])rankMap[nom]={total:0,entregadas:0,ingresos:0,mano:0};
+    rankMap[nom].total++;
+    if(o.estado==='Entregado')rankMap[nom].entregadas++;
+    rankMap[nom].ingresos+=(parseFloat(o.costo)||0);
+    rankMap[nom].mano+=(parseFloat(o.costoMano)||0);
+  });
+  const ranking=Object.entries(rankMap).sort((a,b)=>b[1].total-a[1].total);
+  const rankEl=document.getElementById('ranking-tecnicos');
+  if(!ranking.length){
+    rankEl.innerHTML='<div style="text-align:center;padding:2rem;color:var(--gris2);font-size:13px">No hay OT asignadas a técnicos en este período.</div>';
+  } else {
+    rankEl.innerHTML=ranking.map(([nom,d],i)=>`
+      <div style="display:flex;align-items:center;gap:.875rem;padding:.625rem 0;border-bottom:1px solid var(--borde2)">
+        <div style="width:26px;height:26px;border-radius:50%;background:${i===0?'var(--naranja)':i===1?'var(--turquesa3)':'var(--gris3)'};display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;flex-shrink:0">${i+1}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:500;color:var(--blanco);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nom}</div>
+          <div style="font-size:11px;color:var(--gris2)">${d.total} OT · ${d.entregadas} entregadas · Mano de obra: $${d.mano.toLocaleString('es-AR')}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--turquesa)">${d.total}</div>
+          <div style="font-size:10px;color:var(--gris3)">$${d.ingresos.toLocaleString('es-AR')}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+// ===== MODAL =====
+function abrirModal(id){document.getElementById(id).classList.add('open')}
+window.cerrar=function(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'))});
+</script>
+</body>
+</html>
