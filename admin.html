@@ -818,7 +818,7 @@ window.guardarOT=async function(){
       const esPresupuesto=datos.estado==='Pendiente'&&datos.costo>0&&datos.email&&datos.diag;
       if(esPresupuesto){
         const otId=editingId.slice(-6).toUpperCase();
-        const baseUrl='https://abacosdigitales.github.io/site.github.io/cliente.html';
+        const baseUrl='https://abacosdigitales.github.io/techfix/cliente.html';
         const linkOT=baseUrl+'?ot='+otId;
         try{
           await emailjs.send('service_928zkc2','template_1av53iv',{
