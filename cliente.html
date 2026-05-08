@@ -241,6 +241,7 @@ const firebaseConfig={
 };
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
+window._dbReady=true;
 
 const ESTADOS=['Pendiente','En proceso','Listo','Entregado'];
 const ESTADOS_CLASS={Pendiente:'b-pend','En proceso':'b-proc',Listo:'b-list',Entregado:'b-entr',Cancelado:'b-canc'};
@@ -371,15 +372,15 @@ const urlParams=new URLSearchParams(window.location.search);
 const otFromUrl=urlParams.get('ot');
 if(otFromUrl){
   document.getElementById('input-ot').value=otFromUrl.toUpperCase();
-  // Esperar a que el listener de Firebase esté listo
+  let intentos=0;
   const autoTimer=setInterval(()=>{
-    const btn=document.getElementById('btn-buscar');
-    if(btn&&!btn.disabled){
+    intentos++;
+    if(window._dbReady&&window.buscarOT){
       clearInterval(autoTimer);
       window.buscarOT();
     }
+    if(intentos>25)clearInterval(autoTimer);
   },200);
-  setTimeout(()=>clearInterval(autoTimer),8000);
 }
 
 window.nuevaBusqueda=function(){
