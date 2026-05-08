@@ -366,16 +366,21 @@ window.rechazarOT=async function(){
   }catch(e){if(btn){btn.textContent='Rechazar presupuesto';btn.disabled=false;}alert('Error al procesar. Intenta de nuevo.');}
 }
 
-// Manejar busqueda automatica por URL
-(function(){
-  const params=new URLSearchParams(window.location.search);
-  const otParam=params.get('ot');
-  if(otParam){
-    document.getElementById('input-ot').value=otParam.toUpperCase();
-    // Esperar a que Firebase esté listo y buscar automáticamente
-    setTimeout(()=>window.buscarOT(),800);
-  }
-})();
+// Busqueda automatica por URL
+const urlParams=new URLSearchParams(window.location.search);
+const otFromUrl=urlParams.get('ot');
+if(otFromUrl){
+  document.getElementById('input-ot').value=otFromUrl.toUpperCase();
+  // Esperar a que el listener de Firebase esté listo
+  const autoTimer=setInterval(()=>{
+    const btn=document.getElementById('btn-buscar');
+    if(btn&&!btn.disabled){
+      clearInterval(autoTimer);
+      window.buscarOT();
+    }
+  },200);
+  setTimeout(()=>clearInterval(autoTimer),8000);
+}
 
 window.nuevaBusqueda=function(){
   if(unsubOT){unsubOT();unsubOT=null;}
