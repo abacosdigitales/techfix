@@ -367,21 +367,8 @@ window.rechazarOT=async function(){
   }catch(e){if(btn){btn.textContent='Rechazar presupuesto';btn.disabled=false;}alert('Error al procesar. Intenta de nuevo.');}
 }
 
-// Busqueda automatica por URL
-const urlParams=new URLSearchParams(window.location.search);
-const otFromUrl=urlParams.get('ot');
-if(otFromUrl){
-  document.getElementById('input-ot').value=otFromUrl.toUpperCase();
-  let intentos=0;
-  const autoTimer=setInterval(()=>{
-    intentos++;
-    if(window._dbReady&&window.buscarOT){
-      clearInterval(autoTimer);
-      window.buscarOT();
-    }
-    if(intentos>25)clearInterval(autoTimer);
-  },200);
-}
+// Foco automatico al cargar
+document.getElementById('input-ot').focus();
 
 window.nuevaBusqueda=function(){
   if(unsubOT){unsubOT();unsubOT=null;}

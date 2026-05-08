@@ -818,8 +818,7 @@ window.guardarOT=async function(){
       const esPresupuesto=datos.estado==='Pendiente'&&datos.costo>0&&datos.email&&datos.diag;
       if(esPresupuesto){
         const otId=editingId.slice(-6).toUpperCase();
-        const baseUrl='https://abacosdigitales.github.io/techfix/cliente.html';
-        const linkOT=baseUrl+'?ot='+otId;
+        const linkPortal='https://abacosdigitales.github.io/techfix/cliente.html';
         try{
           await emailjs.send('service_928zkc2','template_1av53iv',{
             cliente_nombre:datos.cliente,
@@ -828,7 +827,7 @@ window.guardarOT=async function(){
             estado:'Presupuesto listo para aprobacion',
             diagnostico:datos.diag,
             costo:'$'+Number(datos.costo).toLocaleString('es-AR'),
-            link_aprobar:'Para ver el presupuesto y confirmar ingresa a: '+linkOT,
+            link_aprobar:'Tu numero de OT es: '+otId+'\n\nIngresa al portal para aprobar o rechazar: '+linkPortal,
             link_rechazar:'',
           });
           toast('Email de presupuesto enviado al cliente');
