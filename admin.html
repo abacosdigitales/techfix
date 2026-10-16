@@ -10,7 +10,6 @@
 <link rel="apple-touch-icon" sizes="180x180" href="https://abacosdigitales.github.io/techfix/apple-touch-icon.png">
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -497,25 +496,56 @@ const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 const auth=getAuth(app);
 
-// ===== EMAILJS =====
-emailjs.init('5EmEhV_vQmQc9U8lI');
+// ===== WHATSAPP NOTIFICATIONS =====
+// CallMeBot: registrate en https://www.callmebot.com/blog/free-api-whatsapp-messages/
+// Reemplazá CALLMEBOT_APIKEY con tu clave personal una vez activada
+const WA_ADMIN_TEL = '5491126972862'; // Tu número sin + ni espacios
+const CALLMEBOT_APIKEY = '5406921'; // Reemplazar con tu API key de CallMeBot
+
+async function notificarAdminWA(sol){
+  const msg = encodeURIComponent(
+    `🔔 *Nueva solicitud TechFix Pro*\n`+
+    `👤 ${sol.nombre||''} ${sol.apellido||''}\n`+
+    `📱 ${sol.tel||'—'}\n`+
+    `💻 ${sol.tipo||'—'}${sol.marca?' · '+sol.marca:''}\n`+
+    `📝 ${(sol.problema||'').slice(0,80)}${(sol.problema||'').length>80?'…':''}\n`+
+    `⚡ Urgencia: ${sol.urgencia==='urgente'?'🔴 URGENTE':'Normal'}\n`+
+    `👉 Revisá el panel de admin`
+  );
+  try{
+    await fetch(`https://api.callmebot.com/whatsapp.php?phone=${WA_ADMIN_TEL}&text=${msg}&apikey=${CALLMEBOT_APIKEY}`);
+    console.log('WhatsApp admin enviado');
+  }catch(e){
+    console.warn('WhatsApp admin no enviado:',e);
+  }
+}
+
+function abrirWhatsAppCliente(ot, tipo){
+  if(!ot.tel) return;
+  const tel = ot.tel.replace(/\D/g,'');
+  const telWA = tel.startsWith('54') ? tel : '54'+tel;
+  const otId = (ot._id||'').slice(-6).toUpperCase();
+  const portal = 'https://abacosdigitales.github.io/techfix/cliente.html';
+  let msg = '';
+  if(tipo==='estado'){
+    msg = `Hola ${ot.cliente||''}! 👋 Tu equipo (*${ot.equipo||''}*) cambió de estado a *${ot.estado}*. Podés seguirlo en: ${portal} con tu OT: *${otId}*`;
+  } else if(tipo==='presupuesto'){
+    msg = `Hola ${ot.cliente||''}! 👋 El diagnóstico de tu *${ot.equipo||''}* está listo.\n\n`+
+          `📋 *Diagnóstico:* ${ot.diag||'—'}\n`+
+          `💰 *Presupuesto:* $${Number(ot.costo||0).toLocaleString('es-AR')}\n\n`+
+          `Ingresá al portal con tu OT *${otId}* para aprobar o rechazar:\n${portal}`;
+  } else if(tipo==='listo'){
+    msg = `Hola ${ot.cliente||''}! 🎉 Tu equipo (*${ot.equipo||''}*) está *listo para retirar*. \n`+
+          `Traé tu comprobante OT *${otId}*. \nHorarios: Lun-Vie 9-18hs · Sáb 10-13hs. ¡Te esperamos!`;
+  }
+  window.open(`https://wa.me/${telWA}?text=${encodeURIComponent(msg)}`,'_blank');
+}
 
 async function enviarNotificacion(ot, estadoAnterior){
-  // Solo enviar si hay email del cliente y el estado cambió
-  if(!ot.email || ot.email.trim()==='' ) return;
+  if(!ot.tel || ot.tel.trim()==='') return;
   if(estadoAnterior && estadoAnterior===ot.estado) return;
-  try{
-    await emailjs.send('service_928zkc2','template_1av53iv',{
-      cliente_nombre: ot.cliente||'Cliente',
-      cliente_email:  ot.email,
-      equipo:         ot.equipo||'—',
-      estado:         ot.estado||'—',
-      diagnostico:    ot.diag?`Diagnóstico: ${ot.diag}`:'',
-    });
-    console.log('Email enviado a',ot.email);
-  }catch(e){
-    console.warn('Email no enviado:',e);
-  }
+  if(ot.estado==='Listo') abrirWhatsAppCliente(ot,'listo');
+  else abrirWhatsAppCliente(ot,'estado');
 }
 
 const EC={Pendiente:'b-pend','En proceso':'b-proc',Listo:'b-list',Entregado:'b-entr',Cancelado:'b-canc'};
@@ -617,9 +647,21 @@ function iniciarListeners(){
   });
 
   if(usuario.rol==='admin'){
+    let idsConocidos=null;
     unsubSol=onSnapshot(collection(db,'solicitudes'),snap=>{
-      solicitudes=snap.docs.map(d=>({_id:d.id,...d.data()}));
-      solicitudes.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+      const nuevas=snap.docs.map(d=>({_id:d.id,...d.data()}));
+      nuevas.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+      // Notificar al admin por WhatsApp solo cuando hay solicitudes realmente nuevas
+      if(idsConocidos!==null){
+        snap.docChanges().forEach(change=>{
+          if(change.type==='added'){
+            const sol={_id:change.doc.id,...change.doc.data()};
+            if(sol.estado==='Pendiente revisión') notificarAdminWA(sol);
+          }
+        });
+      }
+      idsConocidos=new Set(snap.docs.map(d=>d.id));
+      solicitudes=nuevas;
       updateBadge();renderSolicitudes();renderDash();
     },err=>toast('Error solicitudes: '+err.message,'err'));
 
@@ -814,26 +856,13 @@ window.guardarOT=async function(){
       const estadoAnterior=otAnterior?otAnterior.estado:null;
       await updateDoc(doc(db,'ordenes',editingId),{...datos,actualizadoEn:serverTimestamp()});
 
-      // Si hay presupuesto listo para aprobar, mandar ese email en lugar del de cambio de estado
-      const esPresupuesto=datos.estado==='Pendiente'&&datos.costo>0&&datos.email&&datos.diag;
+      // Si hay presupuesto listo para aprobar, abre WhatsApp con el mensaje de presupuesto
+      const esPresupuesto=datos.estado==='Pendiente'&&datos.costo>0&&datos.tel&&datos.diag;
       if(esPresupuesto){
-        const otId=editingId.slice(-6).toUpperCase();
-        const linkPortal='https://abacosdigitales.github.io/techfix/cliente.html';
-        try{
-          await emailjs.send('service_928zkc2','template_1av53iv',{
-            cliente_nombre:datos.cliente,
-            cliente_email:datos.email,
-            equipo:datos.equipo,
-            estado:'Presupuesto listo para aprobacion',
-            diagnostico:datos.diag,
-            costo:'$'+Number(datos.costo).toLocaleString('es-AR'),
-            link_aprobar:'Tu numero de OT es: '+otId+'\n\nIngresa al portal para aprobar o rechazar: '+linkPortal,
-            link_rechazar:'',
-          });
-          toast('Email de presupuesto enviado al cliente');
-        }catch(emailErr){console.warn('Email presupuesto no enviado:',emailErr);}
+        abrirWhatsAppCliente({...datos,_id:editingId},'presupuesto');
+        toast('WhatsApp de presupuesto listo — revisá que se abrió la ventana');
       } else {
-        // Solo mandar notificación de cambio de estado en otros casos
+        // Notificación de cambio de estado por WhatsApp
         await enviarNotificacion(datos, estadoAnterior);
       }
     } else {
