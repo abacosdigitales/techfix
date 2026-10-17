@@ -436,10 +436,6 @@ footer{background:var(--negro3);border-top:1px solid var(--borde);padding:2rem 0
               <label>Teléfono *</label>
               <input type="tel" id="f-tel" placeholder="11 1234-5678">
             </div>
-            <div class="form-field">
-              <label>Email *</label>
-              <input type="email" id="f-mail" placeholder="tu@correo.com">
-            </div>
           </div>
           <div class="form-field">
             <label>Tipo de equipo *</label>
@@ -622,7 +618,7 @@ footer{background:var(--negro3);border-top:1px solid var(--borde);padding:2rem 0
           <h4>¿Cómo puedo saber el estado de mi equipo?</h4>
           <div class="faq-icon">+</div>
         </div>
-        <div class="faq-respuesta"><p>Podés consultar el estado en tiempo real desde nuestro <a href="cliente.html" style="color:var(--turquesa)">portal de seguimiento</a> ingresando el número de tu orden de trabajo. También te notificamos por email cada vez que hay una novedad.</p></div>
+        <div class="faq-respuesta"><p>Podés consultar el estado en tiempo real desde nuestro <a href="cliente.html" style="color:var(--turquesa)">portal de seguimiento</a> ingresando el número de tu orden de trabajo. También te notificamos por WhatsApp cada vez que hay una novedad.</p></div>
       </div>
       <div class="faq-item">
         <div class="faq-pregunta" onclick="toggleFaq(this)">
@@ -728,7 +724,7 @@ footer{background:var(--negro3);border-top:1px solid var(--borde);padding:2rem 0
         <h3>Artículo 3 — Diagnóstico y presupuesto</h3>
         <ul>
           <li>El diagnóstico básico es <strong>sin cargo</strong>. En casos que requieran desarme completo, se informará previamente si existe costo de diagnóstico.</li>
-          <li>El presupuesto es comunicado al cliente por el medio de contacto informado (WhatsApp, email o teléfono) antes de iniciar cualquier reparación.</li>
+          <li>El presupuesto es comunicado al cliente por WhatsApp o teléfono antes de iniciar cualquier reparación.</li>
           <li>El cliente tiene un plazo de <strong>48 horas hábiles</strong> para aprobar o rechazar el presupuesto. Pasado ese plazo, se considerará rechazado.</li>
           <li>Si el cliente rechaza el presupuesto, deberá abonar un <strong>costo de diagnóstico</strong> (informado previamente) antes de retirar el equipo.</li>
         </ul>
@@ -794,7 +790,7 @@ footer{background:var(--negro3);border-top:1px solid var(--borde);padding:2rem 0
 
       <div class="contrato-art">
         <h3>Artículo 10 — Privacidad de datos</h3>
-        <p>Los datos personales del cliente (nombre, teléfono, email) son utilizados exclusivamente para la gestión del servicio y comunicaciones relacionadas. No son compartidos con terceros. El cliente puede solicitar la eliminación de sus datos en cualquier momento.</p>
+        <p>Los datos personales del cliente (nombre, teléfono) son utilizados exclusivamente para la gestión del servicio y comunicaciones relacionadas. No son compartidos con terceros. El cliente puede solicitar la eliminación de sus datos en cualquier momento.</p>
       </div>
 
       <div style="margin-top:2rem;padding:1rem;background:rgba(255,107,26,0.08);border:1px solid rgba(255,107,26,0.2);border-radius:6px">
@@ -808,7 +804,6 @@ footer{background:var(--negro3);border-top:1px solid var(--borde);padding:2rem 0
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -824,8 +819,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// EmailJS
-emailjs.init('5EmEhV_vQmQc9U8lI');
+// ===== WHATSAPP / CALLMEBOT =====
+const WA_ADMIN_TEL   = '5491126972862';
+const CALLMEBOT_APIKEY = '5406921';
+
+async function notificarAdminWA(sol, id){
+  const msg = encodeURIComponent(
+    `🔔 *Nueva solicitud TechFix Pro*\n`+
+    `👤 ${sol.nombre} ${sol.apellido}\n`+
+    `📱 ${sol.tel}\n`+
+    `💻 ${sol.tipo}${sol.marca?' · '+sol.marca:''}${sol.modelo?' '+sol.modelo:''}\n`+
+    `📝 ${sol.desc.slice(0,80)}${sol.desc.length>80?'…':''}\n`+
+    `⚡ Urgencia: ${sol.urgencia==='urgente'?'🔴 URGENTE':'Normal'}\n`+
+    `🆔 ${id}\n`+
+    `👉 Revisá el panel de admin`
+  );
+  try{
+    await fetch(`https://api.callmebot.com/whatsapp.php?phone=${WA_ADMIN_TEL}&text=${msg}&apikey=${CALLMEBOT_APIKEY}`);
+  }catch(e){
+    console.warn('WhatsApp admin no enviado:',e);
+  }
+}
 
 window.abrirContrato=function(e){e&&e.preventDefault();document.getElementById('modal-contrato').classList.add('open')}
 window.cerrarContrato=function(){document.getElementById('modal-contrato').classList.remove('open')}
@@ -835,23 +849,21 @@ window.enviarSolicitud=async function(){
   const nombre=document.getElementById('f-nombre').value.trim();
   const apellido=document.getElementById('f-apellido').value.trim();
   const tel=document.getElementById('f-tel').value.trim();
-  const mail=document.getElementById('f-mail').value.trim();
   const tipo=document.getElementById('f-tipo').value;
   const desc=document.getElementById('f-desc').value.trim();
   const chk=document.getElementById('chk-contrato').checked;
-  if(!nombre||!apellido||!tel||!mail||!tipo||!desc){alert('Por favor completá todos los campos obligatorios.');return}
+  if(!nombre||!apellido||!tel||!tipo||!desc){alert('Por favor completá todos los campos obligatorios.');return}
   if(!chk){alert('Debés aceptar los Términos y Condiciones para continuar.');return}
 
   const btn=document.querySelector('.btn-submit');
   btn.textContent='Enviando...';btn.disabled=true;
 
   try {
+    const marca=document.getElementById('f-marca').value.trim();
+    const modelo=document.getElementById('f-modelo').value.trim();
+    const urgencia=document.getElementById('f-urgencia').value;
     const solicitud={
-      nombre,apellido,tel,mail,tipo,
-      marca:document.getElementById('f-marca').value.trim(),
-      modelo:document.getElementById('f-modelo').value.trim(),
-      desc,
-      urgencia:document.getElementById('f-urgencia').value,
+      nombre,apellido,tel,tipo,marca,modelo,desc,urgencia,
       fecha:new Date().toISOString().slice(0,10),
       estado:'Pendiente revisión',
       creadoEn:serverTimestamp()
@@ -859,21 +871,8 @@ window.enviarSolicitud=async function(){
     const docRef=await addDoc(collection(db,'solicitudes'),solicitud);
     const id='SOL-'+docRef.id.slice(-6).toUpperCase();
 
-    // Notificar al admin por email
-    try{
-      await emailjs.send('service_928zkc2','template_aa3u2q1',{
-        cliente_nombre: nombre+' '+apellido,
-        cliente_tel:    tel,
-        cliente_email:  mail,
-        equipo_tipo:    tipo,
-        equipo_marca:   [document.getElementById('f-marca').value.trim(), document.getElementById('f-modelo').value.trim()].filter(Boolean).join(' ')||'—',
-        urgencia:       document.getElementById('f-urgencia').value==='urgente'?'URGENTE':'Normal',
-        problema:       desc,
-        solicitud_id:   id,
-      });
-    }catch(emailErr){
-      console.warn('Email al admin no enviado:',emailErr);
-    }
+    // Notificar al admin por WhatsApp via CallMeBot
+    await notificarAdminWA({nombre,apellido,tel,tipo,marca,modelo,desc,urgencia}, id);
 
     document.getElementById('form-solicitud').style.display='none';
     const sm=document.getElementById('success-msg');
@@ -972,20 +971,19 @@ window.enviarResena=async function(){
       creadoEn:serverTimestamp()
     });
 
-    // Notificar al admin
+    // Notificar al admin por WhatsApp
     try{
       const estrellasStr='★'.repeat(estrellas)+'☆'.repeat(5-estrellas);
-      await emailjs.send('service_928zkc2','template_aa3u2q1',{
-        cliente_nombre:nombre,
-        cliente_tel:'—',
-        cliente_email:'—',
-        equipo_tipo:estrellasStr+' Nueva resena pendiente',
-        equipo_marca:equipo||'—',
-        urgencia:'Pendiente de aprobacion en el panel admin',
-        problema:texto,
-        solicitud_id:'RESENA — Aprobar en: https://abacosdigitales.github.io/site.github.io/TECHFIX/admin.html',
-      });
-    }catch(e){console.warn('Email no enviado:',e);}
+      const msgResena=encodeURIComponent(
+        `⭐ *Nueva reseña pendiente — TechFix Pro*\n`+
+        `👤 ${nombre}\n`+
+        `${estrellasStr}\n`+
+        `💻 ${equipo||'—'}\n`+
+        `💬 ${texto.slice(0,80)}${texto.length>80?'…':''}\n`+
+        `👉 Aprobala en el panel de admin`
+      );
+      await fetch(`https://api.callmebot.com/whatsapp.php?phone=${WA_ADMIN_TEL}&text=${msgResena}&apikey=${CALLMEBOT_APIKEY}`);
+    }catch(e){console.warn('WhatsApp reseña no enviado:',e);}
 
     document.getElementById('form-resena').style.display='none';
     document.getElementById('resena-success').style.display='block';
