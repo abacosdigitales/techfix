@@ -1073,5 +1073,17 @@ document.getElementById('modal-contrato').addEventListener('click',e=>{if(e.targ
 })();
 
 </script>
+<script>
+// Precarga del formulario desde servicios-techfix.html (?servicio=...&equipo=...)
+(function(){
+  var p=new URLSearchParams(location.search), s=p.get('servicio'), e=p.get('equipo');
+  if(!s&&!e) return;
+  var tipos={'PC escritorio':'PC de escritorio','Notebook':'Notebook / Laptop'};
+  var sel=document.getElementById('f-tipo');
+  if(sel&&tipos[e]) sel.value=tipos[e];
+  var d=document.getElementById('f-desc');
+  if(d&&s) d.value='Servicio solicitado: '+s+'.\n\nDetalles: ';
+})();
+</script>
 </body>
 </html>
