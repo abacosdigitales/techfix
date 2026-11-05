@@ -10,6 +10,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="https://abacosdigitales.github.io/techfix/apple-touch-icon.png">
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -167,6 +168,58 @@ tr:hover td{background:rgba(255,255,255,0.02);color:var(--blanco)}
 ::-webkit-scrollbar-track{background:var(--negro3)}
 ::-webkit-scrollbar-thumb{background:var(--negro5);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--turquesa3)}
+
+/* ===== RESPONSIVE / MOBILE ===== */
+.menu-btn{display:none;background:var(--negro4);border:1px solid var(--borde2);color:var(--blanco);width:38px;height:38px;border-radius:6px;font-size:18px;cursor:pointer;flex-shrink:0}
+.sidebar-overlay{display:none}
+@media(max-width:900px){
+  .stats-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:768px){
+  .menu-btn{display:inline-flex;align-items:center;justify-content:center}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;height:100dvh;width:260px;z-index:300;transform:translateX(-100%);transition:transform .25s ease;box-shadow:none}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 30px rgba(0,0,0,.6)}
+  .sidebar-overlay.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:250}
+  .nav-item{padding:.8rem 1.25rem;font-size:14px}
+  .topbar{padding:.625rem .875rem;gap:.5rem}
+  .page-title{font-size:18px}
+  #fb-status,#fecha-top{display:none!important}
+  .content{padding:1rem .875rem}
+  .stats-row{gap:.625rem;margin-bottom:1rem}
+  .stat-card{padding:.875rem}
+  .stat-val{font-size:28px}
+  .content [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+  .fg-row{grid-template-columns:1fr}
+  .toolbar .search-box{flex-basis:100%}
+  .toolbar .filter-sel{flex:1}
+  .btn{padding:10px 14px}
+  .btn-sm{padding:7px 12px}
+  .btn-icon{width:38px;height:38px}
+  .fg input,.fg select,.fg textarea,.search-box input,.filter-sel,.login-field input{font-size:16px}
+  /* Modales como hoja inferior */
+  .modal-overlay{padding:0;align-items:flex-end}
+  .modal{width:100%;max-width:100%;max-height:94dvh;border-radius:14px 14px 0 0}
+  .modal-hdr,.modal-bd,.modal-ft{padding-left:1rem;padding-right:1rem}
+  .modal-ft{flex-wrap:wrap}
+  .modal-ft .btn{flex:1}
+  .det-v{max-width:60%;word-break:break-word}
+  /* Tablas como tarjetas */
+  .tbl-wrap{overflow-x:visible}
+  table{min-width:0;display:block}
+  thead{display:none}
+  tbody{display:block}
+  tr{display:block;background:var(--negro4);border:1px solid var(--borde2);border-radius:8px;margin:.625rem;padding:.25rem .75rem}
+  tr:hover td{background:transparent}
+  td{display:flex;justify-content:space-between;align-items:center;gap:1rem;text-align:right;padding:.5rem 0;border-bottom:1px solid var(--borde2);max-width:none!important;white-space:normal!important;overflow:visible!important}
+  td:last-child{border-bottom:none}
+  td[data-label]::before{content:attr(data-label);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gris2);text-align:left;flex-shrink:0}
+  td.td-actions{justify-content:flex-end}
+  .actions{gap:8px}
+  /* Solicitudes / reseñas */
+  .sol-card{flex-direction:column;gap:.75rem}
+  .sol-actions{flex-wrap:wrap;width:100%;flex-direction:row!important}
+  .sol-actions .btn{flex:1}
+}
 </style>
 </head>
 <body>
@@ -194,7 +247,8 @@ tr:hover td{background:rgba(255,255,255,0.02);color:var(--blanco)}
 
 <!-- APP -->
 <div id="app-wrapper">
-<aside class="sidebar">
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <img src="https://abacosdigitales.github.io/techfix/apple-touch-icon.png" alt="TechFix Pro">
     <div>
@@ -232,6 +286,7 @@ tr:hover td{background:rgba(255,255,255,0.02);color:var(--blanco)}
 <div class="main">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
+      <button class="menu-btn" onclick="toggleSidebar()" aria-label="Menú">☰</button>
       <div class="page-title" id="page-title">Dashboard</div>
       <div id="fb-status" style="font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;background:rgba(245,158,11,0.15);color:#f59e0b;">⏳ Conectando...</div>
     </div>
@@ -496,56 +551,25 @@ const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 const auth=getAuth(app);
 
-// ===== WHATSAPP NOTIFICATIONS =====
-// CallMeBot: registrate en https://www.callmebot.com/blog/free-api-whatsapp-messages/
-// Reemplazá CALLMEBOT_APIKEY con tu clave personal una vez activada
-const WA_ADMIN_TEL = '5491126972862'; // Tu número sin + ni espacios
-const CALLMEBOT_APIKEY = '5406921'; // Reemplazar con tu API key de CallMeBot
-
-async function notificarAdminWA(sol){
-  const msg = encodeURIComponent(
-    `🔔 *Nueva solicitud TechFix Pro*\n`+
-    `👤 ${sol.nombre||''} ${sol.apellido||''}\n`+
-    `📱 ${sol.tel||'—'}\n`+
-    `💻 ${sol.tipo||'—'}${sol.marca?' · '+sol.marca:''}\n`+
-    `📝 ${(sol.problema||'').slice(0,80)}${(sol.problema||'').length>80?'…':''}\n`+
-    `⚡ Urgencia: ${sol.urgencia==='urgente'?'🔴 URGENTE':'Normal'}\n`+
-    `👉 Revisá el panel de admin`
-  );
-  try{
-    await fetch(`https://api.callmebot.com/whatsapp.php?phone=${WA_ADMIN_TEL}&text=${msg}&apikey=${CALLMEBOT_APIKEY}`);
-    console.log('WhatsApp admin enviado');
-  }catch(e){
-    console.warn('WhatsApp admin no enviado:',e);
-  }
-}
-
-function abrirWhatsAppCliente(ot, tipo){
-  if(!ot.tel) return;
-  const tel = ot.tel.replace(/\D/g,'');
-  const telWA = tel.startsWith('54') ? tel : '54'+tel;
-  const otId = (ot._id||'').slice(-6).toUpperCase();
-  const portal = 'https://abacosdigitales.github.io/techfix/cliente.html';
-  let msg = '';
-  if(tipo==='estado'){
-    msg = `Hola ${ot.cliente||''}! 👋 Tu equipo (*${ot.equipo||''}*) cambió de estado a *${ot.estado}*. Podés seguirlo en: ${portal} con tu OT: *${otId}*`;
-  } else if(tipo==='presupuesto'){
-    msg = `Hola ${ot.cliente||''}! 👋 El diagnóstico de tu *${ot.equipo||''}* está listo.\n\n`+
-          `📋 *Diagnóstico:* ${ot.diag||'—'}\n`+
-          `💰 *Presupuesto:* $${Number(ot.costo||0).toLocaleString('es-AR')}\n\n`+
-          `Ingresá al portal con tu OT *${otId}* para aprobar o rechazar:\n${portal}`;
-  } else if(tipo==='listo'){
-    msg = `Hola ${ot.cliente||''}! 🎉 Tu equipo (*${ot.equipo||''}*) está *listo para retirar*. \n`+
-          `Traé tu comprobante OT *${otId}*. \nHorarios: Lun-Vie 9-18hs · Sáb 10-13hs. ¡Te esperamos!`;
-  }
-  window.open(`https://wa.me/${telWA}?text=${encodeURIComponent(msg)}`,'_blank');
-}
+// ===== EMAILJS =====
+emailjs.init('5EmEhV_vQmQc9U8lI');
 
 async function enviarNotificacion(ot, estadoAnterior){
-  if(!ot.tel || ot.tel.trim()==='') return;
+  // Solo enviar si hay email del cliente y el estado cambió
+  if(!ot.email || ot.email.trim()==='' ) return;
   if(estadoAnterior && estadoAnterior===ot.estado) return;
-  if(ot.estado==='Listo') abrirWhatsAppCliente(ot,'listo');
-  else abrirWhatsAppCliente(ot,'estado');
+  try{
+    await emailjs.send('service_928zkc2','template_1av53iv',{
+      cliente_nombre: ot.cliente||'Cliente',
+      cliente_email:  ot.email,
+      equipo:         ot.equipo||'—',
+      estado:         ot.estado||'—',
+      diagnostico:    ot.diag?`Diagnóstico: ${ot.diag}`:'',
+    });
+    console.log('Email enviado a',ot.email);
+  }catch(e){
+    console.warn('Email no enviado:',e);
+  }
 }
 
 const EC={Pendiente:'b-pend','En proceso':'b-proc',Listo:'b-list',Entregado:'b-entr',Cancelado:'b-canc'};
@@ -647,21 +671,9 @@ function iniciarListeners(){
   });
 
   if(usuario.rol==='admin'){
-    let idsConocidos=null;
     unsubSol=onSnapshot(collection(db,'solicitudes'),snap=>{
-      const nuevas=snap.docs.map(d=>({_id:d.id,...d.data()}));
-      nuevas.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
-      // Notificar al admin por WhatsApp solo cuando hay solicitudes realmente nuevas
-      if(idsConocidos!==null){
-        snap.docChanges().forEach(change=>{
-          if(change.type==='added'){
-            const sol={_id:change.doc.id,...change.doc.data()};
-            if(sol.estado==='Pendiente revisión') notificarAdminWA(sol);
-          }
-        });
-      }
-      idsConocidos=new Set(snap.docs.map(d=>d.id));
-      solicitudes=nuevas;
+      solicitudes=snap.docs.map(d=>({_id:d.id,...d.data()}));
+      solicitudes.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
       updateBadge();renderSolicitudes();renderDash();
     },err=>toast('Error solicitudes: '+err.message,'err'));
 
@@ -682,7 +694,16 @@ function iniciarListeners(){
 
 // ===== NAV =====
 const TITLES={dashboard:'Dashboard',ordenes:'Órdenes de Trabajo',solicitudes:'Solicitudes Web',clientes:'Clientes',tecnicos:'Técnicos',resenas:'Reseñas',estadisticas:'Estadísticas'};
+window.toggleSidebar=function(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('show');
+}
+window.closeSidebar=function(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
 window.showView=function(id,el){
+  closeSidebar();
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -746,15 +767,15 @@ window.renderOrdenes=function(){
        +'<button class="btn btn-sm btn-icon" style="background:var(--danger-dim);color:var(--danger);border:1px solid rgba(239,68,68,0.2)" data-action="eliminar" data-id="'+id+'">✕</button>'
       :'<button class="btn btn-ghost btn-sm btn-icon" data-action="actualizar" data-id="'+id+'">✏️</button>';
     return '<tr>'
-      +'<td class="ot-num">'+id.slice(-6).toUpperCase()+'</td>'
-      +'<td>'+o.cliente+'</td>'
-      +'<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+o.equipo+'</td>'
-      +'<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gris2)">'+o.problema+'</td>'
-      +'<td style="white-space:nowrap">'+fmt(o.fecha)+'</td>'
-      +'<td style="white-space:nowrap;color:var(--info)">'+nomTec(o.tecnicoId)+'</td>'
-      +'<td><span class="badge '+(EC[o.estado]||'b-pend')+'">'+o.estado+'</span></td>'
-      +'<td style="white-space:nowrap">'+moneda(o.costo)+'</td>'
-      +'<td><div class="actions">'
+      +'<td class="ot-num" data-label="N° OT">'+id.slice(-6).toUpperCase()+'</td>'
+      +'<td data-label="Cliente">'+o.cliente+'</td>'
+      +'<td data-label="Equipo" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+o.equipo+'</td>'
+      +'<td data-label="Problema" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gris2)">'+o.problema+'</td>'
+      +'<td data-label="Ingreso" style="white-space:nowrap">'+fmt(o.fecha)+'</td>'
+      +'<td data-label="Técnico" style="white-space:nowrap;color:var(--info)">'+nomTec(o.tecnicoId)+'</td>'
+      +'<td data-label="Estado"><span class="badge '+(EC[o.estado]||'b-pend')+'">'+o.estado+'</span></td>'
+      +'<td data-label="Costo" style="white-space:nowrap">'+moneda(o.costo)+'</td>'
+      +'<td class="td-actions"><div class="actions">'
       +'<button class="btn btn-t btn-sm btn-icon" data-action="ver" data-id="'+id+'">👁</button>'
       +btns+'</div></td></tr>';
   }).join('');
@@ -856,13 +877,26 @@ window.guardarOT=async function(){
       const estadoAnterior=otAnterior?otAnterior.estado:null;
       await updateDoc(doc(db,'ordenes',editingId),{...datos,actualizadoEn:serverTimestamp()});
 
-      // Si hay presupuesto listo para aprobar, abre WhatsApp con el mensaje de presupuesto
-      const esPresupuesto=datos.estado==='Pendiente'&&datos.costo>0&&datos.tel&&datos.diag;
+      // Si hay presupuesto listo para aprobar, mandar ese email en lugar del de cambio de estado
+      const esPresupuesto=datos.estado==='Pendiente'&&datos.costo>0&&datos.email&&datos.diag;
       if(esPresupuesto){
-        abrirWhatsAppCliente({...datos,_id:editingId},'presupuesto');
-        toast('WhatsApp de presupuesto listo — revisá que se abrió la ventana');
+        const otId=editingId.slice(-6).toUpperCase();
+        const linkPortal='https://abacosdigitales.github.io/techfix/cliente.html';
+        try{
+          await emailjs.send('service_928zkc2','template_1av53iv',{
+            cliente_nombre:datos.cliente,
+            cliente_email:datos.email,
+            equipo:datos.equipo,
+            estado:'Presupuesto listo para aprobacion',
+            diagnostico:datos.diag,
+            costo:'$'+Number(datos.costo).toLocaleString('es-AR'),
+            link_aprobar:'Tu numero de OT es: '+otId+'\n\nIngresa al portal para aprobar o rechazar: '+linkPortal,
+            link_rechazar:'',
+          });
+          toast('Email de presupuesto enviado al cliente');
+        }catch(emailErr){console.warn('Email presupuesto no enviado:',emailErr);}
       } else {
-        // Notificación de cambio de estado por WhatsApp
+        // Solo mandar notificación de cambio de estado en otros casos
         await enviarNotificacion(datos, estadoAnterior);
       }
     } else {
@@ -1279,10 +1313,10 @@ function renderClientes(){
   if(!lista.length){body.innerHTML='';empty.style.display='block';return}
   empty.style.display='none';
   body.innerHTML=lista.map(c=>`<tr>
-    <td style="font-weight:500;color:var(--blanco)">${c.nombre}</td>
-    <td>${c.tel}</td><td style="color:var(--gris2)">${c.email}</td>
-    <td><span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--turquesa)">${c.count}</span></td>
-    <td>${fmt(c.ultima)}</td>
+    <td data-label="Cliente" style="font-weight:500;color:var(--blanco)">${c.nombre}</td>
+    <td data-label="Teléfono">${c.tel}</td><td data-label="Email" style="color:var(--gris2)">${c.email}</td>
+    <td data-label="OT totales"><span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--turquesa)">${c.count}</span></td>
+    <td data-label="Última visita">${fmt(c.ultima)}</td>
   </tr>`).join('');
 }
 
